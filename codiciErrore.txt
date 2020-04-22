@@ -1,0 +1,3 @@
+46000 il prezzo è negativo
+45000 il prodotto è terminato
+1062 la tupla gia esiste
