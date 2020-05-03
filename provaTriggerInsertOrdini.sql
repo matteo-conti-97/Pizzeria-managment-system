@@ -6,3 +6,7 @@ insert into dbPizzeria.bevanda values('peroni',0,1.5);
 insert into dbPizzeria.bevanda values('coca-cola',5,1.0);
 insert into dbPizzeria.tavolo values(3,2,null);
 insert into dbPizzeria.scontrino (Data, ScontrinoTavolo) values(now(),3);
+insert into dbPizzeria.OrdinePizza (Pizza,Tavolo) values ('margherita',3);
+insert into dbPizzeria.PizzaPlus (Nome,Base) values ('margheritaFunghi','margherita');
+insert into dbPizzeria.Aggiunta (PizzaPlus,Ingrediente) values ('margheritaFunghi', 'funghi');
+insert into dbPizzeria.OrdinePizzaPlus (PizzaPlus,Tavolo) values ('margheritaFunghi',3);
