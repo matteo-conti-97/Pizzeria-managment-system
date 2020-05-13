@@ -10,3 +10,4 @@ insert into dbPizzeria.OrdinePizza (Pizza,Tavolo) values ('margherita',3);
 insert into dbPizzeria.PizzaPlus (Nome,Base) values ('margheritaFunghi','margherita');
 insert into dbPizzeria.Aggiunta (PizzaPlus,Ingrediente) values ('margheritaFunghi', 'funghi');
 insert into dbPizzeria.OrdinePizzaPlus (PizzaPlus,Tavolo) values ('margheritaFunghi',3);
+insert into dbPizzeria.OrdineBevanda (Bevanda,Tavolo) values ('coca-cola',3);
