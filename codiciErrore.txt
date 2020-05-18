@@ -2,3 +2,4 @@
 45002 il tavolo è gia occupato
 45000 il prodotto è terminato
 1062 la tupla gia esiste
+1264 value out of bound for column
