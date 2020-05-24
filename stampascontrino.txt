@@ -1,0 +1,76 @@
+	declare var_ordine_pizza bigint;
+	declare var_ordine_bevanda bigint;
+	declare var_ordine_pizzaplus bigint;
+	declare var_scontrino bigint;
+ 	declare done int default false;
+	declare cur_ordine_pizza cursor for select * from dbPizzeria.OrdinePizza where dbPizzeria.OrdinePizza.Scontrino = var_scontrino;
+	declare cur_ordine_bevanda cursor for select * from dbPizzeria.OrdineBevanda where dbPizzeria.OrdineBevanda.Scontrino=var_scontrino;
+	declare cur_ordine_pizzaplus cursor for select * from dbPizzeria.OrdinePizzaPlus where dbPizzeria.OrdinePizzaPlus.Scontrino = var_scontrino;
+    declare continue handler for not found set done = true;
+
+    declare exit handler for sqlexception
+    begin
+        rollback;  -- rollback any changes made in the transaction
+        resignal;  -- raise again the sql exception to the caller
+    end;
+
+    set transaction isolation level serializable;
+    start transaction;
+
+    select IdTransazione from dbPizzeria.Scontrino where dbPizzeria.Scontrino.Tavolo=tavolo and dbPizzeria.Scontrino.Emissione is null int var_scontrino;
+
+    update dbPizzeria.Scontrino set dbPizzeria.Scontrino.Emissione=now() where dbPizzeria.Scontrino.IdTransazione=var_scontrino;
+
+    -- Return scontrino info
+
+    select * from dbPizzeria.Scontrino where dbPizzeria.Scontrino.IdTransazione=var_scontrino;
+
+    -- Return single ordered product info
+
+    set done=false;
+    open cur_ordine_pizza;
+    read_loop : loop
+
+    	fetch cur_ordine_pizza into var_ordine_pizza;
+		if done then
+			leave read_loop;
+		end if;
+
+		select Nome as nome_pizza, Prezzo as prezzo_pizza
+		from dbPizzeria.Pizza join dbPizzeria.OrdinePizza on dbPizzeria.Pizza.Nome=dbPizzeria.OrdinePizza.Pizza
+		where dbPizzeria.OrdinePizza.Scontrino=var_scontrino and dbPizzeria.OrdinePizza.Numero=var_ordine_pizza
+		end loop;
+		close cur_pizza;
+
+	set done=false;
+    open cur_ordine_pizzaplus;
+    read_loop : loop
+
+    	fetch cur_ordine_pizzaplus into var_ordine_pizzaplus;
+		if done then
+			leave read_loop;
+		end if;
+
+		select Nome as nome_pizzaplus, Prezzo as prezzo_pizzaplus
+		from dbPizzeria.PizzaPlus join dbPizzeria.OrdinePizzaPlus on dbPizzeria.PizzaPlus.Nome=dbPizzeria.OrdinePizzaPlus.PizzaPlus
+		where dbPizzeria.OrdinePizzaPlus.Scontrino=var_scontrino and dbPizzeria.OrdinePizzaPlus.Numero=var_ordine_pizzaplus
+		end loop;
+		close cur_ordine_pizzaplus;
+
+	set done=false;
+    open cur_ordine_bevanda;
+    read_loop : loop
+
+    	fetch cur_ordine_bevanda into var_ordine_bevanda;
+		if done then
+			leave read_loop;
+		end if;
+
+		select Nome as nome_bevanda, Prezzo as prezzo_bevanda
+		from dbPizzeria.Bevanda join dbPizzeria.OrdineBevanda on dbPizzeria.Pizza.Nome=dbPizzeria.OrdinePizza.Pizza
+		where dbPizzeria.OrdineBevanda.Scontrino=var_scontrino and dbPizzeria.OrdineBevanda.Numero=var_ordine_bevanda
+		end loop;
+		close cur_ordine_bevanda;
+
+	
+            

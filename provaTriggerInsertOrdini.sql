@@ -10,6 +10,8 @@ insert into dbPizzeria.bevanda values('peroni',0,1.5);
 insert into dbPizzeria.bevanda values('coca-cola',5,1.0);
 insert into dbPizzeria.tavolo values(3,2,null);
 insert into dbPizzeria.tavolo values(4,2,null);
+call dbpizzeria.registra_cliente('1234', 'matteo', 'conti', 2);
+call dbpizzeria.assegna_tavolo_a_cliente('1234', 3);
 insert into dbPizzeria.scontrino (Data, ScontrinoTavolo) values(now(),3);
 insert into dbPizzeria.OrdinePizza (Pizza,Tavolo) values ('margherita',3);
 insert into dbPizzeria.PizzaPlus (Nome,Base) values ('margheritaFunghi','margherita');
