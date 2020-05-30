@@ -1,4 +1,7 @@
 45002 il tavolo è gia occupato
+45005 l'ingrediente non esiste
+45004 la bevanda non esiste
+45003 la pizza non esiste
 1062 la tupla gia esiste
 1264 value out of bound for column
 45000 non cameriere
