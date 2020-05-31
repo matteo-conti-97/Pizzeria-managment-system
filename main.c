@@ -95,6 +95,8 @@ int main(void) {
 		fprintf (stderr, "mysql_init() failed (probably out of memory)\n");
 		exit(EXIT_FAILURE);
 	}
+	
+	//if (mysql_real_connect(conn, "localhost", "root", "root", "dbPizzeria", "3306", NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
 
 	if (mysql_real_connect(conn, conf.host, conf.db_username, conf.db_password, conf.database, conf.port, NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
 		fprintf (stderr, "mysql_real_connect() failed\n");
