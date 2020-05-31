@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mysql.h>
+#include <mysql/mysql.h>
 #include "defines.h"
 
 
@@ -34,7 +34,7 @@ static role_t attempt_login(MYSQL *conn, int matricola, char *password) {
 	memset(param, 0, sizeof(param));
 	
 	param[0].buffer_type = MYSQL_TYPE_LONG; // IN
-	param[0].buffer = matricola;
+	param[0].buffer = &matricola;
 	param[0].buffer_length = sizeof(MYSQL_TYPE_LONG);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
@@ -103,7 +103,7 @@ int main(void) {
 	}
 
 	printf("Matricola: ");
-	getInput(128, conf.username, false);
+	getMatInput(sizeof(int), conf.username, false);
 	printf("Password: ");
 	getInput(128, conf.password, true);
 
