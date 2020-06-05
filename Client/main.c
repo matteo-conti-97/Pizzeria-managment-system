@@ -85,10 +85,10 @@ static role_t attempt_login(MYSQL *conn, int matricola, char *password) {
 int main(void) {
 	role_t role;
 
-	if(!parse_config("users/login.json", &conf)) {
+	/*if(!parse_config("users/login.json", &conf)) {
 		fprintf(stderr, "Unable to load login configuration\n");
 		exit(EXIT_FAILURE);
-	}
+	}*/
 
 	conn = mysql_init (NULL);
 	if (conn == NULL) {
@@ -136,7 +136,7 @@ int main(void) {
 			abort();
 	}
 
-	printf("Bye!\n");
+	printf("Ciao!\n");
 
 	mysql_close (conn);
 	return 0;
