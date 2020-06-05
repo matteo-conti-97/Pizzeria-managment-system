@@ -68,17 +68,17 @@ static void prendi_in_carico_ordine_pizza(MYSQL *conn) {
 
 	mysql_stmt_close(prepared_stmt);
 
-check_ok:
+check_ok_pizza:
 	//espleta ordine
 	printf("Digitare ok per espletare l'ordine\n");
 	if(scanf("%s", ok)<1){
 		printf("Errore nella conferma\n");
-		goto check_ok;
+		goto check_ok_pizza;
 	}
 
 	if(strcmp(ok,"ok")!=0){
 		printf("Per favore digita ok\n");
-		goto check_ok;
+		goto check_ok_pizza;
 	}
 
 	// Prepare stored procedure call
@@ -165,17 +165,17 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 
 	mysql_stmt_close(prepared_stmt);
 
-check_ok:
+check_ok_pizza_plus:
 	//espleta ordine
 	printf("Digitare ok per espletare l'ordine\n");
 	if(scanf("%s", ok)<1){
 		printf("Errore nella conferma\n");
-		goto check_ok;
+		goto check_ok_pizza_plus;
 	}
 
 	if(strcmp(ok,"ok")!=0){
 		printf("Per favore digita ok\n");
-		goto check_ok;
+		goto check_ok_pizza_plus;
 	}
 
 	// Prepare stored procedure call
