@@ -208,10 +208,10 @@ void run_as_pizzaiolo(MYSQL *conn)
 	
 	printf("Passo al ruolo di pizzaiolo...\n");
 
-	/*if(!parse_config("users/docente.json", &conf)) {
+	if(!parse_config("users/pizzaiolo.json", &conf)) {
 		fprintf(stderr, "Unable to load professor configuration\n");
 		exit(EXIT_FAILURE);
-	}*/
+	}
 
 	if(mysql_change_user(conn, conf.db_username, conf.db_password, conf.database)) {
 		fprintf(stderr, "mysql_change_user() failed\n");
