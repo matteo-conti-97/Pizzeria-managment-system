@@ -84,6 +84,7 @@ static role_t attempt_login(MYSQL *conn, int matricola, char *password) {
 
 int main(void) {
 	role_t role;
+	char user_mat[10];
 
 	if(!parse_config("users/login.json", &conf)) {
 		fprintf(stderr, "Unable to load login configuration\n");
@@ -105,7 +106,8 @@ int main(void) {
 	}
 
 	printf("Matricola: ");
-	getMatInput(sizeof(int), conf.username, false);
+	getInput(sizeof(int), user_mat, false);
+	conf.username=atoi(user_mat);
 	printf("Password: ");
 	getInput(128, conf.password, true);
 

@@ -17,7 +17,6 @@ extern struct configuration conf;
 
 extern int parse_config(char *path, struct configuration *conf);
 extern char *getInput(unsigned int lung, char *stringa, bool hide);
-extern char *getMatInput(unsigned int lung, int intero, bool hide);
 extern bool yesOrNo(char *domanda, char yes, char no, bool predef, bool insensitive);
 extern char multiChoice(char *domanda, char choices[], int num);
 extern void print_error (MYSQL *conn, char *message);
