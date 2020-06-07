@@ -209,7 +209,7 @@ void run_as_pizzaiolo(MYSQL *conn)
 	printf("Passo al ruolo di pizzaiolo...\n");
 
 	if(!parse_config("users/pizzaiolo.json", &conf)) {
-		fprintf(stderr, "Unable to load professor configuration\n");
+		fprintf(stderr, "Unable to load pizzaiolo configuration\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -225,7 +225,7 @@ void run_as_pizzaiolo(MYSQL *conn)
 		printf("2) Prendi in carico ordine pizzaplus");
 		printf("3) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 2);
+		op = multiChoice("Seleziona un opzione", options, 3);
 
 		switch(op) {
 

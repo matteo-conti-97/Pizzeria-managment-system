@@ -112,7 +112,7 @@ void run_as_barman(MYSQL *conn)
 	printf("Passo al ruolo di barman...\n");
 
 	if(!parse_config("users/barman.json", &conf)) {
-		fprintf(stderr, "Unable to load professor configuration\n");
+		fprintf(stderr, "Unable to load barman configuration\n");
 		exit(EXIT_FAILURE);
 	}
 
