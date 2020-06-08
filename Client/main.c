@@ -97,16 +97,17 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 	
-	//if (mysql_real_connect(conn, "localhost", "root", "root", "dbPizzeria", "3306", NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
+	if (mysql_real_connect(conn, "localhost", "root", "root", "dbPizzeria", 3306, NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
 
-	if (mysql_real_connect(conn, conf.host, conf.db_username, conf.db_password, conf.database, conf.port, NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
+	//if (mysql_real_connect(conn, conf.host, conf.db_username, conf.db_password, conf.database, conf.port, NULL, CLIENT_MULTI_STATEMENTS | CLIENT_MULTI_RESULTS) == NULL) {
 		fprintf (stderr, "mysql_real_connect() failed\n");
 		mysql_close (conn);
 		exit(EXIT_FAILURE);
 	}
 
+	printf("Benvenuto, inserisci le tue credenziali\n");
 	printf("Matricola: ");
-	getInput(sizeof(int), user_mat, false);
+	getInput(10, user_mat, false);
 	conf.username=atoi(user_mat);
 	printf("Password: ");
 	getInput(128, conf.password, true);
@@ -114,9 +115,9 @@ int main(void) {
 	role = attempt_login(conn, conf.username, conf.password);
 
 	switch(role) {
-		case MANAGER:
+		/*case MANAGER:
 			run_as_manager(conn);
-			break;
+			break;*/
 			
 		case CAMERIERE:
 			run_as_cameriere(conn);
