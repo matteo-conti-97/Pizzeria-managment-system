@@ -67,7 +67,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
-	param[0].buffer_length = sizeof(&tavolo);
+	param[0].buffer_length = sizeof(tavolo);
 
 	printf("Inserisci la pizza:\n");
 
@@ -126,7 +126,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
-	param[0].buffer_length = sizeof(&tavolo);
+	param[0].buffer_length = sizeof(tavolo);
 
 	printf("Inserisci la bevanda:\n");
 
@@ -186,7 +186,7 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
-	param[0].buffer_length = sizeof(&tavolo);
+	param[0].buffer_length = sizeof(tavolo);
 
 	printf("Inserisci la pizza da usare come base:\n");
 
@@ -351,7 +351,7 @@ static void consegna_ordine_pizza(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
-	param[0].buffer_length = sizeof(long long int);
+	param[0].buffer_length = sizeof(id_ordine);
 	
 
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -405,7 +405,7 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
-	param[0].buffer_length = sizeof(long long int);
+	param[0].buffer_length = sizeof(id_ordine);
 	
 
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -459,7 +459,7 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
-	param[0].buffer_length = sizeof(long long int);
+	param[0].buffer_length = sizeof(id_ordine);
 	
 
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {

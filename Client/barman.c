@@ -16,13 +16,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_bevanda_da_espletare()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_bevanda_da_espletare statement\n", false);
 	}
-
-	// Prepare parameters
 	
-	
-	/*if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_ordini_bevanda_da_espletare\n", true);
-	}*/
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
@@ -39,10 +33,9 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prendi_in_carico_ordine_bevanda statement\n", false);
 	}
 
-	//clean parameters
+	// Prepare parameters
 	memset(param, 0, sizeof(param));
 	
-	// Get the required information
 	printf("\nID ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
@@ -52,7 +45,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
-	param[0].buffer_length = sizeof(long long int);
+	param[0].buffer_length = sizeof(id_ordine);
 	
 
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {

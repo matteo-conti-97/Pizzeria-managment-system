@@ -35,7 +35,7 @@ static role_t attempt_login(MYSQL *conn, int matricola, char *password) {
 	
 	param[0].buffer_type = MYSQL_TYPE_LONG; // IN
 	param[0].buffer = &matricola;
-	param[0].buffer_length = sizeof(MYSQL_TYPE_LONG);
+	param[0].buffer_length = sizeof(matricola);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
 	param[1].buffer = password;
@@ -107,7 +107,7 @@ int main(void) {
 
 	printf("Benvenuto, inserisci le tue credenziali\n");
 	printf("Matricola: ");
-	getInput(10, user_mat, false);
+	getInput(128, user_mat, false);
 	conf.username=atoi(user_mat);
 	printf("Password: ");
 	getInput(128, conf.password, true);
@@ -115,9 +115,9 @@ int main(void) {
 	role = attempt_login(conn, conf.username, conf.password);
 
 	switch(role) {
-		/*case MANAGER:
+		case MANAGER:
 			run_as_manager(conn);
-			break;*/
+			break;
 			
 		case CAMERIERE:
 			run_as_cameriere(conn);
