@@ -8,7 +8,6 @@
 #include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
-
 #include "defines.h"
 
 // Per la gestione dei segnali

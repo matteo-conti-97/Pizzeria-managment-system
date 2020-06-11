@@ -9,7 +9,7 @@ static void visualizza_info_tavoli_associati(MYSQL *conn) {
 	MYSQL_BIND param[1];
 
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_info_tavoli_associati(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_info_tavoli_associati(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_info_tavoli_associati statement\n", false);
 	}
 
@@ -41,7 +41,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 	int tavolo;
 
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_pizze()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
 	}
 
@@ -77,7 +77,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 	param[1].buffer = pizza;
 	param[1].buffer_length = sizeof(pizza);
 	
-	if(!setup_prepared_stmt(&prepared_stmt, "registra_ordine_pizza(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call registra_ordine_pizza(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize registra_ordine_pizza statement\n", false);
 	}
 	
@@ -100,7 +100,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 	int tavolo;
 
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_bevande()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
 	}
 
@@ -136,7 +136,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 	param[1].buffer = bevanda;
 	param[1].buffer_length = sizeof(bevanda);
 	
-	if(!setup_prepared_stmt(&prepared_stmt, "registra_ordine_bevanda(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call registra_ordine_bevanda(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize registra_ordine_bevanda statement\n", false);
 	}
 	
@@ -160,7 +160,7 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 	int tavolo;
 
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_pizze()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
 	}
 
@@ -212,7 +212,7 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 			param[i+2].buffer_length = sizeof(ing[i]);
 	}
 
-	if(!setup_prepared_stmt(&prepared_stmt, "registra_ordine_pizza(?,?,?,?,?,?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call registra_ordine_pizza_plus(?,?,?,?,?,?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize registra_ordine_pizza_plus statement\n", false);
 	}
 	
@@ -269,7 +269,7 @@ static void visualizza_ordini_espletati(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 
 	//Pizza
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_pizza()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza statement\n", false);
 	}
 	
@@ -285,7 +285,7 @@ static void visualizza_ordini_espletati(MYSQL *conn) {
 
 	//Pizzaplus
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_pizza_plus()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
 	}
 	
@@ -300,7 +300,7 @@ static void visualizza_ordini_espletati(MYSQL *conn) {
 
 	//Bevanda
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_bevanda()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_bevanda statement\n", false);
 	}
 
@@ -319,7 +319,7 @@ static void consegna_ordine_pizza(MYSQL *conn){
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_pizza()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza statement\n", false);
 	}
 
@@ -373,7 +373,7 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_bevanda()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_bevanda statement\n", false);
 	}
 
@@ -427,7 +427,7 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_espletati_pizza_plus()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
 	}
 
@@ -517,7 +517,7 @@ static void visualizza_menu(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 
 	//Pizza
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_pizze()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
 	}
 	
@@ -532,7 +532,7 @@ static void visualizza_menu(MYSQL *conn) {
 
 	//Pizzaplus
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_ingredienti()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_ingredienti()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_ingredienti statement\n", false);
 	}
 	
@@ -547,7 +547,7 @@ static void visualizza_menu(MYSQL *conn) {
 
 	//Bevanda
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_bevande()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
 	}
 	

@@ -2,14 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
 #include "defines.h"
-
-void str_lower(char str[]){
-	for(int i = 0; str[i]; i++){
-  		str[i] = tolower(str[i]);
-	}
-}
 
 void print_stmt_error (MYSQL_STMT *stmt, char *message)
 {

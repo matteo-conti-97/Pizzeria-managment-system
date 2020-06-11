@@ -13,7 +13,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	// Input for the registration routine
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_bevanda_da_espletare()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_bevanda_da_espletare()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_bevanda_da_espletare statement\n", false);
 	}
 	
@@ -117,7 +117,7 @@ void run_as_barman(MYSQL *conn)
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Prendi in carico ordine bevanda");
+		printf("1) Prendi in carico ordine bevanda\n");
 		printf("2) Quit\n");
 
 		op = multiChoice("Seleziona un opzione", options, 2);

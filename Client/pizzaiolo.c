@@ -13,7 +13,7 @@ static void prendi_in_carico_ordine_pizza(MYSQL *conn) {
 	// Input for the registration routine
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_pizza_da_espletare()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_pizza_da_espletare()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_pizza_da_espletare statement\n", false);
 	}
 	
@@ -104,7 +104,7 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 	// Input for the registration routine
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_ordini_pizza_plus_da_espletare()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_pizza_plus_da_espletare()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_pizza_plus_da_espletare statement\n", false);
 	}
 

@@ -4,6 +4,7 @@
 #include <mysql/mysql.h>
 #include "defines.h"
 
+
 static void registra_cliente(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param1[4];
@@ -15,7 +16,7 @@ static void registra_cliente(MYSQL *conn) {
 	int tavolo;
 
 	//Registrazione cliente
-	if(!setup_prepared_stmt(&prepared_stmt, "registra_cliente(?,?,?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call registra_cliente(?,?,?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize registra_cliente statement\n", false);
 	}
 
@@ -70,7 +71,7 @@ static void registra_cliente(MYSQL *conn) {
 
 
 	//Visualizzazione tavoli
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_tavoli()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_tavoli()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_tavoli statement\n", false);
 	}
 
@@ -87,7 +88,7 @@ static void registra_cliente(MYSQL *conn) {
 	//Assegnazione tavolo
 
 	//Registrazione cliente
-	if(!setup_prepared_stmt(&prepared_stmt, "assegna_tavolo_a_cliente(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call assegna_tavolo_a_cliente(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize assegna_tavolo_a_cliente\n", false);
 	}
 
@@ -120,7 +121,7 @@ static void stampa_scontrino(MYSQL *conn){
 	MYSQL_BIND param[1];
 	int tavolo;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "stampa_scontrino(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call stampa_scontrino(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize stampa_scontrino\n", false);
 	}
 
@@ -156,7 +157,7 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 	MYSQL_BIND param[1];
 	MYSQL_TIME data;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_entrate_giorno(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_giorno(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_entrate_giorno\n", false);
 	}
 
@@ -169,16 +170,27 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 		return;
 	}
 
+	vis_gio_mese:
 	printf("Inserire mese:\n");
 	if(scanf("%d",&data.month)<1){
 		printf("Errore inserimento mese\n");
 		return;
 	}
 
+	if(data.month>12){
+		printf("Inserire un giorno minore di 13\n");
+		goto vis_gio_mese;
+	}
+
+	vis_gio_giorno:
 	printf("Inserire giorno:\n");
 	if(scanf("%d",&data.day)<1){
 		printf("Errore inserimento giorno\n");
 		return;
+	}
+	if(data.day>31){
+		printf("Inserire un giorno minore di 32\n");
+		goto vis_gio_giorno;
 	}
 
 	param[0].buffer_type = MYSQL_TYPE_DATE;
@@ -206,7 +218,7 @@ static void visualizza_entrate_mese(MYSQL *conn){
 	MYSQL_TIME data;
 	data.day=00;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_entrate_mese(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_mese(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_entrate_mese\n", false);
 	}
 
@@ -219,10 +231,16 @@ static void visualizza_entrate_mese(MYSQL *conn){
 		return;
 	}
 
+	vis_mes_mese:
 	printf("Inserire mese:\n");
 	if(scanf("%d",&data.month)<1){
 		printf("Errore inserimento mese\n");
 		return;
+	}
+
+	if(data.month>12){
+		printf("Inserire un giorno minore di 13\n");
+		goto vis_mes_mese;
 	}
 
 
@@ -251,7 +269,7 @@ static void aumenta_scorte_pizza(MYSQL *conn){
 	char pizza[45];
 	int scorte;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aumenta_scorte_pizza(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aumenta_scorte_pizza(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aumenta_scorte_pizza\n", false);
 	}
 
@@ -292,7 +310,7 @@ static void aumenta_scorte_bevanda(MYSQL *conn){
 	char bevanda[45];
 	int scorte;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aumenta_scorte_bevanda(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aumenta_scorte_bevanda(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aumenta_scorte_bevanda\n", false);
 	}
 
@@ -333,7 +351,7 @@ static void aumenta_scorte_ingrediente(MYSQL *conn){
 	char ingrediente[45];
 	int scorte;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aumenta_scorte_ingrediente(?,?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aumenta_scorte_ingrediente(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aumenta_scorte_ingrediente\n", false);
 	}
 
@@ -373,7 +391,7 @@ static void aumenta_scorte_tutti_prodotti(MYSQL *conn){
 	MYSQL_BIND param[1];
 	int scorte;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aumenta_scorte_tutti_prodotti(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aumenta_scorte_tutti_prodotti(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aumenta_scorte_tutti_prodotti\n", false);
 	}
 
@@ -449,7 +467,7 @@ static void aggiungi_pizza(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char pizza[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aggiungi_pizza(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_pizza(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_pizza\n", false);
 	}
 
@@ -480,7 +498,7 @@ static void aggiungi_bevanda(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char bevanda[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aggiungi_bevanda(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_bevanda(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_bevanda\n", false);
 	}
 
@@ -511,7 +529,7 @@ static void aggiungi_ingrediente(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char ingrediente[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aggiungi_ingrediente(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_ingrediente(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_ingrediente\n", false);
 	}
 
@@ -579,7 +597,7 @@ static void rimuovi_pizza(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char pizza[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "rimuovi_pizza(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_pizza(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_pizza\n", false);
 	}
 
@@ -610,7 +628,7 @@ static void rimuovi_bevanda(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char bevanda[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "rimuovi_bevanda(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_bevanda(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_bevanda\n", false);
 	}
 
@@ -641,7 +659,7 @@ static void rimuovi_ingrediente(MYSQL *conn){
 	MYSQL_BIND param[1];
 	char ingrediente[45];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "rimuovi_ingrediente(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_ingrediente(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_ingrediente\n", false);
 	}
 
@@ -708,7 +726,7 @@ static void visualizza_prodotti(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 
 	//Pizza
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_pizze()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
 	}
 	
@@ -723,7 +741,7 @@ static void visualizza_prodotti(MYSQL *conn){
 
 	//Pizzaplus
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_ingredienti()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_ingredienti()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_ingredienti statement\n", false);
 	}
 	
@@ -738,7 +756,7 @@ static void visualizza_prodotti(MYSQL *conn){
 
 	//Bevanda
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_menu_bevande()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
 	}
 	
@@ -798,7 +816,7 @@ static void aggiungi_tavolo(MYSQL *conn){
 	MYSQL_BIND param[1];
 	int tavolo;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aggiungi_tavolo(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_tavolo(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_tavolo\n", false);
 	}
 
@@ -832,7 +850,7 @@ static void rimuovi_tavolo(MYSQL *conn){
 	MYSQL_BIND param[1];
 	int tavolo;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "aggiungi_tavolo(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_tavolo(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_tavolo\n", false);
 	}
 
@@ -897,7 +915,7 @@ static void gestisci_tavoli(MYSQL *conn){
 static void visualizza_turni_impiegati(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_turni_impiegati()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni_impiegati()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni_impiegati\n", false);
 	}
 
@@ -914,7 +932,7 @@ static void visualizza_turni_impiegati(MYSQL *conn){
 static void visualizza_turni_tavoli(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_turni_tavoli()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni_tavoli()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni_tavoli\n", false);
 	}
 
@@ -928,11 +946,56 @@ static void visualizza_turni_tavoli(MYSQL *conn){
 	mysql_stmt_close(prepared_stmt);
 }
 
+static int choose_day(){
+	char options[10] = {'1','2','3','4','5','6','7','8'};
+	char op;
+
+	while(true) {
+		printf("\033[2J\033[H");
+		printf("*** Selezionare un giorno ***\n\n");
+		printf("1) Lunedi'\n ");
+		printf("2) Martedi'\n");
+		printf("3) Mercoledi'\n");
+		printf("4) Giovedi'\n");
+		printf("5) Venerdi'\n");
+		printf("6) Sabato\n");
+		printf("7) Domenica\n");
+		printf("8) Quit\n");
+
+		op = multiChoice("Seleziona un opzione", options, 8);
+
+		switch(op) {
+
+			case '1':
+				return 2;
+			case '2':
+				return 3;
+			case '3':
+				return 4;
+			case '4':
+				return 5;
+			case '5':
+				return 6;
+			case '6':
+				return 7;
+			case '7':
+				return 1;
+			case '8':
+				return -1;
+				
+			default:
+				fprintf(stderr, "Invalid condition at %s:%d\n", __FILE__, __LINE__);
+				abort();
+		}
+
+		getchar();
+	}
+}
+
 static void assegna_turno_a_impiegato(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[4];
 	int impiegato;
-	char str_giorno[9];
 	int giorno;
 	MYSQL_TIME ora_inizio;
 	MYSQL_TIME ora_fine;
@@ -940,7 +1003,7 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 	ora_fine.second=00;
 
 	//Visualizza turni
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_turni()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni\n", false);
 	}
 
@@ -954,7 +1017,7 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 	mysql_stmt_close(prepared_stmt);
 
 	//Visualizza impiegati
-	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_impiegati()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_impiegati()", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_impiegati\n", false);
 	}
 
@@ -968,8 +1031,8 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 	mysql_stmt_close(prepared_stmt);
 	
 
-
-	if(!setup_prepared_stmt(&prepared_stmt, "assegna_turno_a_impiegato(?)", conn)) {
+	//Assegna turno
+	if(!setup_prepared_stmt(&prepared_stmt, "call assegna_turno_a_impiegato(?,?,?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize assegna_turno_a_impiegato\n", false);
 	}
 
@@ -981,53 +1044,59 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 		printf("Errore acquisizione impiegato\n");
 	}
 	
-	//AGGIUNGERE CONTROLLI SEGNO E GRANDEZZA
+	ass_imp_ora_inizio:
 	printf("Inserire ora inizio turno:\n");
-	if(scanf("%d",&ora_inizio.hour)<1){
+	if(scanf("%u",&ora_inizio.hour)<1){
 		printf("Errore inserimento ora inizio turno\n");
 		return;
 	}
 
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto ass_imp_ora_inizio;
+	}
+
+	ass_imp_minuto_inizio:
 	printf("Inserire minuto inizio turno:\n");
-	if(scanf("%d",&ora_inizio.minute)<1){
+	if(scanf("%u",&ora_inizio.minute)<1){
 		printf("Errore inserimento minuto inizio turno\n");
 		return;
 	}
 
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto ass_imp_minuto_inizio;
+	}
+
+	ass_imp_ora_fine:
 	printf("Inserire ora fine turno:\n");
-	if(scanf("%d",&ora_fine.hour)<1){
+	if(scanf("%u",&ora_fine.hour)<1){
 		printf("Errore inserimento ora fine turno\n");
 		return;
 	}
 
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto ass_imp_ora_fine;
+	}
+
+	ass_imp_minuto_fine:
 	printf("Inserire minuto fine turno:\n");
-	if(scanf("%d",&ora_fine.minute)<1){
+	if(scanf("%u",&ora_fine.minute)<1){
 		printf("Errore inserimento minuto fine turno\n");
 		return;
 	}
 
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto ass_imp_minuto_fine;
+	}
 
-	giorno:
-		printf("Inserire giorno senza accenti:\n");
-		if(scanf("%s",str_giorno)<1){
-			printf("Errore inserimento giorno\n");
-			return;
-		}
 
-		str_lower(str_giorno);
-
-		if(strcmp(str_giorno,"domenica")==0) giorno=0;
-		else if(strcmp(str_giorno,"lunedi")==0) giorno=1;
-		else if(strcmp(str_giorno,"martedi")==0) giorno=2;
-		else if(strcmp(str_giorno,"mercoledi")==0) giorno=3;
-		else if(strcmp(str_giorno,"giovedi")==0) giorno=4;
-		else if(strcmp(str_giorno,"venerdi")==0) giorno=5;
-		else if(strcmp(str_giorno,"sabato")==0) giorno=6;
-		else {
-			printf("Digitare il giorno correttamente\n");
-			goto giorno;
-		}
-
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
 
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
@@ -1053,10 +1122,592 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve assegna_turno_a_impiegato\n", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not assign workshift to employee\n", true);
 	}else printf("Turno assegnato correttamente\n");
 	mysql_stmt_close(prepared_stmt);
+}
 
+static void assegna_turno_a_tavolo(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[4];
+	int tavolo;
+	int giorno;
+	MYSQL_TIME ora_inizio;
+	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
+
+	//Visualizza turni
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni\n", false);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_turni\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nTurni:");
+	mysql_stmt_close(prepared_stmt);
+
+	//Visualizza tavoli
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_tavoli()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_tavoli\n", false);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_tavoli\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nTavoli:");
+	mysql_stmt_close(prepared_stmt);
+	
+
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call assegna_turno_a_tavolo(?,?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize assegna_turno_a_tavolo\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	printf("Inserisci numero tavolo\n");
+	if(scanf("%d",&tavolo)<1){
+		printf("Errore acquisizione numero tavolo\n");
+	}
+	
+	ass_tav_ora_inizio:
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%u",&ora_inizio.hour)<1){
+		printf("Errore inserimento ora inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto ass_tav_ora_inizio;
+	}
+
+	ass_tav_minuto_inizio:
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%u",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto ass_tav_minuto_inizio;
+	}
+
+	ass_tav_ora_fine:
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%u",&ora_fine.hour)<1){
+		printf("Errore inserimento ora fine turno\n");
+		return;
+	}
+
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto ass_tav_ora_fine;
+	}
+
+	ass_tav_minuto_fine:
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%u",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto ass_tav_minuto_fine;
+	}
+
+
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
+
+
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &tavolo;
+	param[0].buffer_length = sizeof(tavolo);
+
+	param[1].buffer_type = MYSQL_TYPE_TIME;
+	param[1].buffer = &ora_inizio;
+	param[1].buffer_length = sizeof(ora_inizio);
+
+	param[2].buffer_type = MYSQL_TYPE_TIME;
+	param[2].buffer = &ora_fine;
+	param[2].buffer_length = sizeof(ora_fine);
+
+	param[3].buffer_type = MYSQL_TYPE_LONG;
+	param[3].buffer = &giorno;
+	param[3].buffer_length = sizeof(giorno);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for assegna_turno_a_tavolo\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not assign workshift to table\n", true);
+	}else printf("Turno assegnato correttamente\n");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void rimuovi_turno_a_impiegato(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[4];
+	int impiegato;
+	int giorno;
+	MYSQL_TIME ora_inizio;
+	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
+
+	//Visualizza turni
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni_impiegati()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni_impiegati\n", false);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_turni_impiegati\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nTurni impiegati:");
+	mysql_stmt_close(prepared_stmt);	
+
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_turno_impiegato(?,?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_turno_impiegato\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	printf("Inserisci matricola impiegato\n");
+	if(scanf("%d",&impiegato)<1){
+		printf("Errore acquisizione matricola impiegato\n");
+	}
+	
+	rim_imp_ora_inizio:
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%u",&ora_inizio.hour)<1){
+		printf("Errore inserimento ora inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto rim_imp_ora_inizio;
+	}
+
+	rim_imp_minuto_inizio:
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%u",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto rim_imp_minuto_inizio;
+	}
+
+	rim_imp_ora_fine:
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%u",&ora_fine.hour)<1){
+		printf("Errore inserimento ora fine turno\n");
+		return;
+	}
+
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto rim_imp_ora_fine;
+	}
+
+	rim_imp_minuto_fine:
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%u",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto rim_imp_minuto_fine;
+	}
+
+
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
+
+
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &impiegato;
+	param[0].buffer_length = sizeof(impiegato);
+
+	param[1].buffer_type = MYSQL_TYPE_TIME;
+	param[1].buffer = &ora_inizio;
+	param[1].buffer_length = sizeof(ora_inizio);
+
+	param[2].buffer_type = MYSQL_TYPE_TIME;
+	param[2].buffer = &ora_fine;
+	param[2].buffer_length = sizeof(ora_fine);
+
+	param[3].buffer_type = MYSQL_TYPE_LONG;
+	param[3].buffer = &giorno;
+	param[3].buffer_length = sizeof(giorno);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for rimuovi_turno_impiegato\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not remove employee's workshift\n", true);
+	}else printf("Turno rimosso correttamente\n");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void rimuovi_turno_a_tavolo(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[4];
+	int tavolo;
+	int giorno;
+	MYSQL_TIME ora_inizio;
+	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
+
+	//Visualizza turni
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni_tavoli()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni_tavoli\n", false);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_turni_tavoli\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nTurni tavoli:");
+	mysql_stmt_close(prepared_stmt);	
+
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_turno_tavolo(?,?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_turno_tavolo\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	printf("Inserisci numero tavolo\n");
+	if(scanf("%d",&tavolo)<1){
+		printf("Errore acquisizione numero tavolo\n");
+	}
+	
+	rim_tav_ora_inizio:
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%u",&ora_inizio.hour)<1){
+		printf("Errore inserimento ora inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto rim_tav_ora_inizio;
+	}
+
+	rim_tav_minuto_inizio:
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%u",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto rim_tav_minuto_inizio;
+	}
+
+	rim_tav_ora_fine:
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%u",&ora_fine.hour)<1){
+		printf("Errore inserimento ora fine turno\n");
+		return;
+	}
+
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto rim_tav_ora_fine;
+	}
+
+	rim_tav_minuto_fine:
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%u",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto rim_tav_minuto_fine;
+	}
+
+
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
+
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &tavolo;
+	param[0].buffer_length = sizeof(tavolo);
+
+	param[1].buffer_type = MYSQL_TYPE_TIME;
+	param[1].buffer = &ora_inizio;
+	param[1].buffer_length = sizeof(ora_inizio);
+
+	param[2].buffer_type = MYSQL_TYPE_TIME;
+	param[2].buffer = &ora_fine;
+	param[2].buffer_length = sizeof(ora_fine);
+
+	param[3].buffer_type = MYSQL_TYPE_LONG;
+	param[3].buffer = &giorno;
+	param[3].buffer_length = sizeof(giorno);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for rimuovi_turno_tavolo\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not remove table's workshift\n", true);
+	}else printf("Turno rimosso correttamente\n");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void aggiungi_turno(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[3];
+	int giorno;
+	MYSQL_TIME ora_inizio;
+	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_turno(?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_turno\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	add_ora_inizio:
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%u",&ora_inizio.hour)<1){
+		printf("Errore inserimento ora inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto add_ora_inizio;
+	}
+
+	add_minuto_inizio:
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%u",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto add_minuto_inizio;
+	}
+
+	add_ora_fine:
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%u",&ora_fine.hour)<1){
+		printf("Errore inserimento ora fine turno\n");
+		return;
+	}
+
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto add_ora_fine;
+	}
+
+	add_minuto_fine:
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%u",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto add_minuto_fine;
+	}
+
+
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
+
+
+	param[0].buffer_type = MYSQL_TYPE_TIME;
+	param[0].buffer = &ora_inizio;
+	param[0].buffer_length = sizeof(ora_inizio);
+
+	param[1].buffer_type = MYSQL_TYPE_TIME;
+	param[1].buffer = &ora_fine;
+	param[1].buffer_length = sizeof(ora_fine);
+
+	param[2].buffer_type = MYSQL_TYPE_LONG;
+	param[2].buffer = &giorno;
+	param[2].buffer_length = sizeof(giorno);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_turno\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not add workshift\n", true);
+	}else printf("Turno aggiunto correttamente\n");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void rimuovi_turno(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[3];
+	int giorno;
+	MYSQL_TIME ora_inizio;
+	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
+
+	//Visualizza turni
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_turni()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_turni\n", false);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_turni\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nTurni:");
+	mysql_stmt_close(prepared_stmt);
+
+
+	//rimuovi turno
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_turno(?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_turno\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	add_ora_inizio:
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%u",&ora_inizio.hour)<1){
+		printf("Errore inserimento ora inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.hour>23){
+		printf("Inserisci un ora di inizio turno minore di 24\n");
+		goto add_ora_inizio;
+	}
+
+	add_minuto_inizio:
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%u",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	if(ora_inizio.minute>59){
+		printf("Inserirsci un minuto di inizio turno minore di 60\n");
+		goto add_minuto_inizio;
+	}
+
+	add_ora_fine:
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%u",&ora_fine.hour)<1){
+		printf("Errore inserimento ora fine turno\n");
+		return;
+	}
+
+	if(ora_fine.hour>23){
+		printf("Inserisci un ora di fine turno minore di 24\n");
+		goto add_ora_fine;
+	}
+
+	add_minuto_fine:
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%u",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
+	if(ora_fine.minute>59){
+		printf("Inserirsci un minuto di fine turno minore di 60\n");
+		goto add_minuto_fine;
+	}
+
+
+	if((giorno=choose_day())==-1){
+		printf("Non e' stato selezionato un giorno\n");
+		return;
+	}
+
+
+	param[0].buffer_type = MYSQL_TYPE_TIME;
+	param[0].buffer = &ora_inizio;
+	param[0].buffer_length = sizeof(ora_inizio);
+
+	param[1].buffer_type = MYSQL_TYPE_TIME;
+	param[1].buffer = &ora_fine;
+	param[1].buffer_length = sizeof(ora_fine);
+
+	param[2].buffer_type = MYSQL_TYPE_LONG;
+	param[2].buffer = &giorno;
+	param[2].buffer_length = sizeof(giorno);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for rimuovi_turno\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not remove workshift\n", true);
+	}else printf("Turno rimosso correttamente\n");
+	mysql_stmt_close(prepared_stmt);
 }
 
 static void gestisci_turni(MYSQL *conn){
@@ -1116,6 +1767,175 @@ static void gestisci_turni(MYSQL *conn){
 	}
 }
 
+static int choose_role(){
+	char options[6] = {'1','2','3','4','5'};
+	char op;
+
+	while(true) {
+		printf("\033[2J\033[H");
+		printf("*** Selezionare un ruolo ***\n\n");
+		printf("1) Manager\n ");
+		printf("2) Cameriere\n");
+		printf("3) Pizzaiolo\n");
+		printf("4) Barman\n");
+		printf("5) Quit\n");
+
+		op = multiChoice("Seleziona un opzione", options, 5);
+
+		switch(op) {
+
+			case '1':
+				return 1;
+			case '2':
+				return 2;
+			case '3':
+				return 3;
+			case '4':
+				return 4;
+			case '5':
+				return -1;
+				
+			default:
+				fprintf(stderr, "Invalid condition at %s:%d\n", __FILE__, __LINE__);
+				abort();
+		}
+
+		getchar();
+	}
+}
+
+static void aggiungi_impiegato(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[5];
+	int matricola;
+	char nome[45];
+	char cognome[45];
+	char passwd[45];
+	int ruolo;
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_impiegato(?,?,?,?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_impiegato\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	printf("Attenzione le seguenti informazioni sono definitive\n");
+	printf("Inserire matricola impiegato:\n");
+	if(scanf("%d",&matricola)<1){
+		printf("Errore inserimento matricola\n");
+		return;
+	}
+	printf("\nInserire nome impiegato:");
+	getInput(45,nome,false);
+	printf("Inserire cognome impiegato:");
+	getInput(45,cognome,false);
+	printf("Inserire password impiegato");
+	getInput(45,passwd,true);
+
+	if((ruolo=choose_role())==-1){
+		printf("Non è stato selezionato un ruolo\n");
+		return;
+	}
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &matricola;
+	param[0].buffer_length = sizeof(matricola);
+
+	param[1].buffer_type = MYSQL_TYPE_STRING;
+	param[1].buffer = nome;
+	param[1].buffer_length = sizeof(nome);
+
+	param[2].buffer_type = MYSQL_TYPE_STRING;
+	param[2].buffer = cognome;
+	param[2].buffer_length = sizeof(cognome);
+
+	param[3].buffer_type = MYSQL_TYPE_STRING;
+	param[3].buffer = passwd;
+	param[3].buffer_length = sizeof(passwd);
+
+	param[4].buffer_type = MYSQL_TYPE_LONG;
+	param[4].buffer = &ruolo;
+	param[4].buffer_length = sizeof(ruolo);
+
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_impiegato\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not add employee\n", true);
+	}else printf("Impiegato aggiunto correttamente\n");
+
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void rimuovi_impiegato(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[1];
+	int matricola;
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_impiegato(?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_rimuovi\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	printf("Inserire matricola impiegato:\n");
+	if(scanf("%d",&matricola)<1){
+		printf("Errore inserimento matricola\n");
+		return;
+	}
+	
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &matricola;
+	param[0].buffer_length = sizeof(matricola);
+
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for rimuovi_impiegato\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not remove employee\n", true);
+	}else printf("Impiegato rimosso correttamente\n");
+
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void gestisci_impiegati(MYSQL *conn){
+	char options[10] = {'1','2','3'};
+	char op;
+
+	while(true) {
+		printf("\033[2J\033[H");
+		printf("*** Cosa posso fare per te? ***\n\n");
+		printf("1) Aggiungi impiegato\n ");
+		printf("2) Rimuovi impiegato\n");
+		printf("3) Quit\n");
+
+		op = multiChoice("Seleziona un opzione", options, 3);
+
+		switch(op) {
+
+			case '1':
+				aggiungi_impiegato(conn);
+				break;
+			case '2':
+				rimuovi_impiegato(conn);
+				break;
+			case '3':
+				return;
+				
+			default:
+				fprintf(stderr, "Invalid condition at %s:%d\n", __FILE__, __LINE__);
+				abort();
+		}
+
+		getchar();
+	}
+}
 
 
 
