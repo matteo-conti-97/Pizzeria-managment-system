@@ -204,7 +204,7 @@ static void visualizza_entrate_mese(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
 	MYSQL_TIME data;
-	data.day=01;
+	data.day=00;
 
 	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_entrate_mese(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_entrate_mese\n", false);
@@ -936,6 +936,8 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 	int giorno;
 	MYSQL_TIME ora_inizio;
 	MYSQL_TIME ora_fine;
+	ora_inizio.second=00;
+	ora_fine.second=00;
 
 	//Visualizza turni
 	if(!setup_prepared_stmt(&prepared_stmt, "visualizza_turni()", conn)) {
@@ -979,17 +981,31 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 		printf("Errore acquisizione impiegato\n");
 	}
 	
-	/*rintf("Inserire ora inizio turno con il formato HH:MM:SS senza spazi :\n");
-	if(scanf("%d",&data.year)<1){
+	//AGGIUNGERE CONTROLLI SEGNO E GRANDEZZA
+	printf("Inserire ora inizio turno:\n");
+	if(scanf("%d",&ora_inizio.hour)<1){
 		printf("Errore inserimento ora inizio turno\n");
 		return;
 	}
 
-	printf("Inserire ora fine turno con il formato HH:MM:SS senza spazi :\n");
-	if(scanf("%d",&data.month)<1){
+	printf("Inserire minuto inizio turno:\n");
+	if(scanf("%d",&ora_inizio.minute)<1){
+		printf("Errore inserimento minuto inizio turno\n");
+		return;
+	}
+
+	printf("Inserire ora fine turno:\n");
+	if(scanf("%d",&ora_fine.hour)<1){
 		printf("Errore inserimento ora fine turno\n");
 		return;
-	}*/
+	}
+
+	printf("Inserire minuto fine turno:\n");
+	if(scanf("%d",&ora_fine.minute)<1){
+		printf("Errore inserimento minuto fine turno\n");
+		return;
+	}
+
 
 	giorno:
 		printf("Inserire giorno senza accenti:\n");
