@@ -464,10 +464,11 @@ static void aumenta_scorte_prodotto(MYSQL *conn){
 
 static void aggiungi_pizza(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	char pizza[45];
+	double prezzo;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_pizza(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_pizza(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_pizza\n", false);
 	}
 
@@ -477,9 +478,20 @@ static void aggiungi_pizza(MYSQL *conn){
 	printf("Inserire pizza\n");
 	getInput(45,pizza,false);
 
+	printf("Inserire prezzo\n");
+	if(scanf("%lf",&prezzo)<1){
+		printf("Inserimento prezzo fallito\n");
+		return;
+	}
+
 	param[0].buffer_type = MYSQL_TYPE_STRING;
 	param[0].buffer = pizza;
 	param[0].buffer_length = sizeof(pizza);
+
+	param[1].buffer_type = MYSQL_TYPE_DOUBLE;
+	param[1].buffer = &prezzo;
+	param[1].buffer_length = sizeof(prezzo);
+
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_pizza\n", true);
@@ -495,10 +507,11 @@ static void aggiungi_pizza(MYSQL *conn){
 
 static void aggiungi_bevanda(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	char bevanda[45];
+	double prezzo;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_bevanda(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_bevanda(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_bevanda\n", false);
 	}
 
@@ -508,9 +521,20 @@ static void aggiungi_bevanda(MYSQL *conn){
 	printf("Inserire bevanda\n");
 	getInput(45,bevanda,false);
 
+	printf("Inserire prezzo\n");
+	if(scanf("%lf",&prezzo)<1){
+		printf("Inserimento prezzo fallito\n");
+		return;
+	}
+
+
 	param[0].buffer_type = MYSQL_TYPE_STRING;
 	param[0].buffer = bevanda;
 	param[0].buffer_length = sizeof(bevanda);
+
+	param[1].buffer_type = MYSQL_TYPE_DOUBLE;
+	param[1].buffer = &prezzo;
+	param[1].buffer_length = sizeof(prezzo);
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_bevanda\n", true);
@@ -526,8 +550,9 @@ static void aggiungi_bevanda(MYSQL *conn){
 
 static void aggiungi_ingrediente(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	char ingrediente[45];
+	double prezzo;
 
 	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_ingrediente(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_ingrediente\n", false);
@@ -539,9 +564,19 @@ static void aggiungi_ingrediente(MYSQL *conn){
 	printf("Inserire ingrediente\n");
 	getInput(45,ingrediente,false);
 
+	printf("Inserire prezzo\n");
+	if(scanf("%lf",&prezzo)<1){
+		printf("Inserimento prezzo fallito\n");
+		return;
+	}
+
 	param[0].buffer_type = MYSQL_TYPE_STRING;
 	param[0].buffer = ingrediente;
 	param[0].buffer_length = sizeof(ingrediente);
+
+	param[1].buffer_type = MYSQL_TYPE_DOUBLE;
+	param[1].buffer = &prezzo;
+	param[1].buffer_length = sizeof(prezzo);
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_ingrediente\n", true);
@@ -813,10 +848,11 @@ static void gestisci_prodotti(MYSQL *conn){
 
 static void aggiungi_tavolo(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	int tavolo;
+	int posti;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_tavolo(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_tavolo(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_tavolo\n", false);
 	}
 
@@ -828,10 +864,22 @@ static void aggiungi_tavolo(MYSQL *conn){
 		printf("Errore nell'acquisire numero tavolo\n");
 		return;
 	}
+	printf("Inserire numero posti tavolo\n");
+	if(scanf("%d",&posti)<1){
+		printf("Errore nell'acquisire numero posti tavolo\n");
+		return;
+	}
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
+
+	param[1].buffer_type = MYSQL_TYPE_LONG;
+	param[1].buffer = &posti;
+	param[1].buffer_length = sizeof(posti);
+
+
+	
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for aggiungi_tavolo\n", true);
@@ -1234,7 +1282,6 @@ static void assegna_turno_a_tavolo(MYSQL *conn){
 	}
 
 
-
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
@@ -1353,7 +1400,6 @@ static void rimuovi_turno_a_impiegato(MYSQL *conn){
 		printf("Non e' stato selezionato un giorno\n");
 		return;
 	}
-
 
 
 	param[0].buffer_type = MYSQL_TYPE_LONG;
@@ -1822,6 +1868,7 @@ static void aggiungi_impiegato(MYSQL *conn){
 	
 	printf("Attenzione le seguenti informazioni sono definitive\n");
 	printf("Inserire matricola impiegato:\n");
+	
 	if(scanf("%d",&matricola)<1){
 		printf("Errore inserimento matricola\n");
 		return;
