@@ -927,8 +927,152 @@ static void rimuovi_tavolo(MYSQL *conn){
 	mysql_stmt_close(prepared_stmt);
 }
 
+static void assegna_tavolo_a_cameriere(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[2];
+	int tavolo;
+	int cameriere;
+
+	//Tavoli
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_tavoli()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_tavoli statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_tavoli\n", true);
+	}
+
+	//Camerieri
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_camerieri()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_camerieri statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_camerieri\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Lista camerieri");
+	mysql_stmt_close(prepared_stmt);
+
+	//Assegnazione
+	if(!setup_prepared_stmt(&prepared_stmt, "call assegna_tavolo_a_cameriere(?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize assegna_tavolo_a_cameriere\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	printf("Inserire numero tavolo\n");
+	if(scanf("%d",&tavolo)<1){
+		printf("Errore nell'acquisire numero tavolo\n");
+		return;
+	}
+	printf("Inserire matricola\n");
+	if(scanf("%d",&cameriere)<1){
+		printf("Errore nell'acquisire matricola\n");
+		return;
+	}
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &cameriere;
+	param[0].buffer_length = sizeof(cameriere);
+
+	param[1].buffer_type = MYSQL_TYPE_LONG;
+	param[1].buffer = &tavolo;
+	param[1].buffer_length = sizeof(tavolo);
+
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for assegna_tavolo_a_cameriere\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not assign table\n", true);
+	}else printf("Tavolo assegnato correttamente\n");
+
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void rimuovi_tavolo_a_cameriere(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[2];
+	int tavolo;
+	int cameriere;
+
+	//Tavoli
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_tavoli()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_tavoli statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_tavoli\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Lista tavoli");
+	mysql_stmt_close(prepared_stmt);
+
+	//Camerieri
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_camerieri()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_camerieri statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_camerieri\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Lista camerieri");
+	mysql_stmt_close(prepared_stmt);
+
+	//Rimozione assegnazione
+	if(!setup_prepared_stmt(&prepared_stmt, "call rimuovi_assegnazione_tavolo(?,?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize rimuovi_assegnazione_tavolo\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	
+	printf("Inserire numero tavolo\n");
+	if(scanf("%d",&tavolo)<1){
+		printf("Errore nell'acquisire numero tavolo\n");
+		return;
+	}
+	printf("Inserire matricola\n");
+	if(scanf("%d",&cameriere)<1){
+		printf("Errore nell'acquisire matricola\n");
+		return;
+	}
+
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &cameriere;
+	param[0].buffer_length = sizeof(cameriere);
+
+	param[1].buffer_type = MYSQL_TYPE_LONG;
+	param[1].buffer = &tavolo;
+	param[1].buffer_length = sizeof(tavolo);
+
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for rimuovi_assegnazione_tavolo\n", true);
+	}
+
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not remove table assignment\n", true);
+	}else printf("Assegnazione tavolo rimossa correttamente\n");
+
+	mysql_stmt_close(prepared_stmt);
+}
+
 static void gestisci_tavoli(MYSQL *conn){
-	char options[4] = {'1','2','3'};
+	char options[6] = {'1','2','3','4','5'};
 	char op;
 
 	while(true) {
@@ -936,9 +1080,11 @@ static void gestisci_tavoli(MYSQL *conn){
 		printf("*** Cosa posso fare per te? ***\n\n");
 		printf("1) Aggiungi tavolo\n ");
 		printf("2) Rimuovi tavolo\n");
-		printf("3) Quit\n");
+		printf("3) Assegna tavolo a cameriere\n ");
+		printf("4) Rimuovi tavolo a cameriere\n");
+		printf("5) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 3);
+		op = multiChoice("Seleziona un opzione", options, 5);
 
 		switch(op) {
 
@@ -949,6 +1095,13 @@ static void gestisci_tavoli(MYSQL *conn){
 				rimuovi_tavolo(conn);
 				break;
 			case '3':
+				assegna_tavolo_a_cameriere(conn);
+				break;
+			case '4':
+				rimuovi_tavolo_a_cameriere(conn);
+				break;
+
+			case '5':
 				return;
 				
 			default:
@@ -995,7 +1148,7 @@ static void visualizza_turni_tavoli(MYSQL *conn){
 }
 
 static int choose_day(){
-	char options[10] = {'1','2','3','4','5','6','7','8'};
+	char options[9] = {'1','2','3','4','5','6','7','8'};
 	char op;
 
 	while(true) {
@@ -1757,7 +1910,7 @@ static void rimuovi_turno(MYSQL *conn){
 }
 
 static void gestisci_turni(MYSQL *conn){
-	char options[4] = {'1','2','3'};
+	char options[10] = {'1','2','3','4','5','6','7','8','9'};
 	char op;
 
 	while(true) {
@@ -1773,7 +1926,7 @@ static void gestisci_turni(MYSQL *conn){
 		printf("8) Rimuovi turno\n");
 		printf("9) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 3);
+		op = multiChoice("Seleziona un opzione", options, 9);
 
 		switch(op) {
 
@@ -1868,7 +2021,7 @@ static void aggiungi_impiegato(MYSQL *conn){
 	
 	printf("Attenzione le seguenti informazioni sono definitive\n");
 	printf("Inserire matricola impiegato:\n");
-	
+	//SENZA SCANF FUNZIONA PULIRE BUFFER
 	if(scanf("%d",&matricola)<1){
 		printf("Errore inserimento matricola\n");
 		return;
