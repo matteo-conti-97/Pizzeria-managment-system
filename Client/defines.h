@@ -29,3 +29,4 @@ extern void run_as_manager(MYSQL *conn);
 extern void run_as_pizzaiolo(MYSQL *conn);
 extern void run_as_barman(MYSQL *conn);
 extern void run_as_cameriere(MYSQL *conn);
+extern void flush_stdin();

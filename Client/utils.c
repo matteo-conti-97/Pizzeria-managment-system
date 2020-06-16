@@ -4,6 +4,11 @@
 #include <ctype.h>
 #include "defines.h"
 
+void flush_stdin(){
+	int c;
+	while ((c = getchar()) != '\n' && c != EOF) { }
+}
+
 void print_stmt_error (MYSQL_STMT *stmt, char *message)
 {
 	fprintf (stderr, "%s\n", message);

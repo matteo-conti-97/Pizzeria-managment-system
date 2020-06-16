@@ -4,6 +4,70 @@
 #include <mysql/mysql.h>
 #include "defines.h"
 
+static void visualizza_menu_pizze(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+
+	//Pizza
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_pizze\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void visualizza_menu_ingredienti(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_ingredienti()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_ingredienti statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_ingredienti\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Menu' ingredienti");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void visualizza_menu_bevande(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+
+	//Bevanda
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_bevande\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
+	mysql_stmt_close(prepared_stmt);
+
+}
+
+static void visualizza_menu(MYSQL *conn) {
+	
+
+	visualizza_menu_pizze(conn);
+
+	visualizza_menu_ingredienti(conn);
+
+	visualizza_menu_bevande(conn);
+}
+
 static void visualizza_info_tavoli_associati(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
@@ -40,20 +104,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 	char pizza[45];
 	int tavolo;
 
-
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_pizze\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_menu_pizze(conn);
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -62,9 +113,10 @@ static void registra_ordine_pizza(MYSQL *conn){
 
 	if(scanf("%d",&tavolo)<1){
 		printf("Errore nell'acquisire il tavolo\n");
+		flush_stdin();
 		return;
 	}
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
@@ -99,20 +151,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 	char bevanda[45];
 	int tavolo;
 
-
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_bevande\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_menu_bevande(conn);
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -121,9 +160,10 @@ static void registra_ordine_bevanda(MYSQL *conn){
 
 	if(scanf("%d",&tavolo)<1){
 		printf("Errore nell'acquisire il tavolo\n");
+		flush_stdin();
 		return;
 	}
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
@@ -159,20 +199,9 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 	char ing[5][45];
 	int tavolo;
 
+	visualizza_menu_pizze(conn);
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_pizze\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_menu_ingredienti(conn);
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -181,9 +210,10 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 
 	if(scanf("%d",&tavolo)<1){
 		printf("Errore nell'acquisire il tavolo\n");
+		flush_stdin();
 		return;
 	}
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
@@ -265,7 +295,7 @@ static void registra_ordine(MYSQL *conn) {
 	}	
 }
 
-static void visualizza_ordini_espletati(MYSQL *conn) {
+static void visualizza_ordini_espletati_pizza(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 
 	//Pizza
@@ -282,22 +312,10 @@ static void visualizza_ordini_espletati(MYSQL *conn) {
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza espletati");
 	mysql_stmt_close(prepared_stmt);
+}
 
-	//Pizzaplus
-
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
-	}
-	
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_ordini_espletati_pizza_plus\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza plus espletati");
-	mysql_stmt_close(prepared_stmt);
-
+static void visualizza_ordini_espletati_bevanda(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
 	//Bevanda
 
 	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda()", conn)) {
@@ -314,24 +332,39 @@ static void visualizza_ordini_espletati(MYSQL *conn) {
 	mysql_stmt_close(prepared_stmt);
 }
 
+static void visualizza_ordini_espletati_pizza_plus(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	//Pizzaplus
+
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_ordini_espletati_pizza_plus\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza plus espletati");
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void visualizza_ordini_espletati(MYSQL *conn) {
+	
+	visualizza_ordini_espletati_pizza(conn);
+
+	visualizza_ordini_espletati_pizza_plus(conn);
+
+	visualizza_ordini_espletati_bevanda(conn);
+}
+
 static void consegna_ordine_pizza(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_ordini_espletati_pizza\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nLista delle pizze espletate");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_ordini_espletati_pizza(conn);
 
 
 	// Prepare stored procedure call
@@ -345,10 +378,11 @@ static void consegna_ordine_pizza(MYSQL *conn){
 	printf("\nID ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
+		flush_stdin();
 		return;
 	}
 
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
 	param[0].buffer_length = sizeof(id_ordine);
@@ -373,19 +407,7 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_bevanda statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_ordini_espletati_bevanda\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nLista delle bevande espletate");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_ordini_espletati_bevanda(conn);
 
 
 	// Prepare stored procedure call
@@ -399,10 +421,11 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 	printf("\nID ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
+		flush_stdin();
 		return;
 	}
 
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
 	param[0].buffer_length = sizeof(id_ordine);
@@ -427,19 +450,7 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 	MYSQL_BIND param[1];
 	long long int id_ordine;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
-	}
-
-
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_ordini_espletati_pizza_plus\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nLista delle pizze plus espletate");
-	mysql_stmt_close(prepared_stmt);
+	visualizza_ordini_espletati_pizza_plus(conn);
 
 
 	// Prepare stored procedure call
@@ -453,10 +464,11 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 	printf("\nID ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
+		flush_stdin();
 		return;
 	}
 
-
+	flush_stdin();
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &id_ordine;
 	param[0].buffer_length = sizeof(id_ordine);
@@ -511,54 +523,6 @@ static void consegna_ordine(MYSQL *conn) {
 
 		getchar();
 	}	
-}
-
-static void visualizza_menu(MYSQL *conn) {
-	MYSQL_STMT *prepared_stmt;
-
-	//Pizza
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_pizze()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_pizze statement\n", false);
-	}
-	
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_pizze\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
-	mysql_stmt_close(prepared_stmt);
-
-	//Pizzaplus
-
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_ingredienti()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_ingredienti statement\n", false);
-	}
-	
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_ingredienti\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' ingredienti");
-	mysql_stmt_close(prepared_stmt);
-
-	//Bevanda
-
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_menu_bevande()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_menu_bevande statement\n", false);
-	}
-	
-	// Run procedure
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_menu_bevande\n", true);
-	}
-
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
-	mysql_stmt_close(prepared_stmt);
 }
 
 void run_as_cameriere(MYSQL *conn){
