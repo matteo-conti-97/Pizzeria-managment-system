@@ -181,15 +181,15 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 		return;
 	}
 	flush_stdin();
-	printf("Anno:%d",data.year);
-	printf("Inserire\n mese:\n");
+
+	printf("Inserire mese:\n");
 	if(scanf("%d",&data.month)<1){
 		printf("Errore inserimento mese\n");
 		flush_stdin();
 		return;
 	}
 	flush_stdin();
-	printf("Mese %d\n",data.month);
+
 	printf("Inserire giorno:\n");
 	if(scanf("%d",&data.day)<1){
 		printf("Errore inserimento giorno\n");
@@ -197,10 +197,9 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 		return;
 	}
 	flush_stdin();
-	printf("Giorno %d\n",data.day);
 
 	param[0].buffer_type = MYSQL_TYPE_DATE;
-	param[0].buffer = &data;
+	param[0].buffer = (char *)&data;
 	param[0].buffer_length = sizeof(data);
 	
 	
@@ -249,7 +248,7 @@ static void visualizza_entrate_mese(MYSQL *conn){
 
 
 	param[0].buffer_type = MYSQL_TYPE_DATE;
-	param[0].buffer = &data;
+	param[0].buffer = (char *)&data;
 	param[0].buffer_length = sizeof(data);
 	
 	
@@ -1633,8 +1632,8 @@ static void aggiungi_turno(MYSQL *conn){
 	int giorno;
 	MYSQL_TIME ora_inizio;
 	MYSQL_TIME ora_fine;
-	ora_inizio.second=00;
-	ora_fine.second=00;
+	ora_inizio.second=0;
+	ora_fine.second=0;
 
 	if(!setup_prepared_stmt(&prepared_stmt, "call aggiungi_turno(?,?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize aggiungi_turno\n", false);
@@ -1644,7 +1643,7 @@ static void aggiungi_turno(MYSQL *conn){
 	memset(param, 0, sizeof(param));
 	
 	printf("Inserire ora inizio turno:\n");
-	if(scanf("%u",&ora_inizio.hour)<1){
+	if(scanf("%d",&ora_inizio.hour)<1){
 		printf("Errore inserimento ora inizio turno\n");
 		flush_stdin();
 		return;
@@ -1652,7 +1651,7 @@ static void aggiungi_turno(MYSQL *conn){
 	flush_stdin();
 	
 	printf("Inserire minuto inizio turno:\n");
-	if(scanf("%u",&ora_inizio.minute)<1){
+	if(scanf("%d",&ora_inizio.minute)<1){
 		printf("Errore inserimento minuto inizio turno\n");
 		flush_stdin();
 		return;
@@ -1660,7 +1659,7 @@ static void aggiungi_turno(MYSQL *conn){
 	flush_stdin();
 	
 	printf("Inserire ora fine turno:\n");
-	if(scanf("%u",&ora_fine.hour)<1){
+	if(scanf("%d",&ora_fine.hour)<1){
 		printf("Errore inserimento ora fine turno\n");
 		flush_stdin();
 		return;
@@ -1668,7 +1667,7 @@ static void aggiungi_turno(MYSQL *conn){
 	flush_stdin();
 	
 	printf("Inserire minuto fine turno:\n");
-	if(scanf("%u",&ora_fine.minute)<1){
+	if(scanf("%d",&ora_fine.minute)<1){
 		printf("Errore inserimento minuto fine turno\n");
 		flush_stdin();
 		return;
@@ -1682,11 +1681,11 @@ static void aggiungi_turno(MYSQL *conn){
 
 
 	param[0].buffer_type = MYSQL_TYPE_TIME;
-	param[0].buffer = &ora_inizio;
+	param[0].buffer = (char *)&ora_inizio;
 	param[0].buffer_length = sizeof(ora_inizio);
 
 	param[1].buffer_type = MYSQL_TYPE_TIME;
-	param[1].buffer = &ora_fine;
+	param[1].buffer = (char *)&ora_fine;
 	param[1].buffer_length = sizeof(ora_fine);
 
 	param[2].buffer_type = MYSQL_TYPE_LONG;
@@ -1763,11 +1762,11 @@ static void rimuovi_turno(MYSQL *conn){
 
 
 	param[0].buffer_type = MYSQL_TYPE_TIME;
-	param[0].buffer = &ora_inizio;
+	param[0].buffer = (char *)&ora_inizio;
 	param[0].buffer_length = sizeof(ora_inizio);
 
 	param[1].buffer_type = MYSQL_TYPE_TIME;
-	param[1].buffer = &ora_fine;
+	param[1].buffer = (char *)&ora_fine;
 	param[1].buffer_length = sizeof(ora_fine);
 
 	param[2].buffer_type = MYSQL_TYPE_LONG;
@@ -1905,11 +1904,11 @@ static void aggiungi_impiegato(MYSQL *conn){
 		return;
 	}
 	flush_stdin();
-	printf("\nInserire nome impiegato:");
+	printf("Inserire nome impiegato:\n");
 	getInput(45,nome,false);
-	printf("Inserire cognome impiegato:");
+	printf("Inserire cognome impiegato:\n");
 	getInput(45,cognome,false);
-	printf("Inserire password impiegato");
+	printf("Inserire password impiegato\n");
 	getInput(45,passwd,true);
 
 	if((ruolo=choose_role())==-1){
