@@ -45,10 +45,10 @@ static void espleta_ordine_pizza(MYSQL *conn, long long int ordine){
 	}
 	flush_stdin();
 	if((strcmp(check,"ok")!=0)&&(strcmp(check,"stop")!=0)){
-		printf("Per favore digita ok\n");
+		printf("Per favore digita ok o stop\n");
 		goto check_ok_pizza;
 	}
-	else if(strcmp(check,"stop")!=0) {
+	else if(strcmp(check,"stop")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
@@ -65,10 +65,10 @@ static void espleta_ordine_pizza(MYSQL *conn, long long int ordine){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nell'espletare in carico ordine pizza.\n");
+		return;
 	} else {
 		printf("Ordine pizza espletato correttamente\n");
 	}
-
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -76,9 +76,6 @@ static void prendi_in_carico_ordine_pizza(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
 	long long int id_ordine;
-
-	visualizza_ordini_pizza_da_espletare(conn);
-
 
 	// Prepare stored procedure call
 	if(!setup_prepared_stmt(&prepared_stmt, "call prendi_in_carico_ordine_pizza(?)", conn)) {
@@ -109,6 +106,7 @@ static void prendi_in_carico_ordine_pizza(MYSQL *conn) {
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel prendere in carico ordine pizza.\n");
+		return;
 	} else {
 		printf("Ordine pizza preso in carico correttamente\n");
 	}
@@ -160,7 +158,7 @@ static void espleta_ordine_pizza_plus(MYSQL *conn, long long int ordine){
 		printf("Per favore digita ok\n");
 		goto check_ok_pizza_plus;
 	}
-	else if(strcmp(check,"stop")!=0) {
+	else if(strcmp(check,"stop")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
@@ -177,6 +175,7 @@ static void espleta_ordine_pizza_plus(MYSQL *conn, long long int ordine){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nell'espletare in carico ordine pizza plus.\n");
+		return;
 	} else {
 		printf("Ordine pizza plus espletato correttamente\n");
 	}
@@ -188,8 +187,6 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
 	long long int id_ordine;
-
-	visualizza_ordini_pizza_plus_da_espletare(conn);
 
 	// Prepare stored procedure call
 	if(!setup_prepared_stmt(&prepared_stmt, "call prendi_in_carico_ordine_pizza_plus(?)", conn)) {
@@ -218,6 +215,7 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel prendere in carico ordine pizza plus.\n");
+		return;
 	} else {
 		printf("Ordine pizza plus preso in carico correttamente\n");
 	}
@@ -229,7 +227,7 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 }
 
 void run_as_pizzaiolo(MYSQL *conn){
-	char options[3] = {'1','2','3'};
+	char options[6] = {'1','2','3','4','5'};
 	char op;
 	
 	printf("Passo al ruolo di pizzaiolo...\n");
@@ -248,10 +246,12 @@ void run_as_pizzaiolo(MYSQL *conn){
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
 		printf("1) Prendi in carico ordine pizza\n ");
-		printf("2) Prendi in carico ordine pizzaplus");
-		printf("3) Quit\n");
+		printf("2) Prendi in carico ordine pizzaplus\n");
+		printf("3) Visualizza ordini pizza da espletare\n");
+		printf("4) Visualizza ordini pizza plus da espletare\n");
+		printf("5) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 3);
+		op = multiChoice("Seleziona un opzione", options, 5);
 
 		switch(op) {
 
@@ -262,6 +262,12 @@ void run_as_pizzaiolo(MYSQL *conn){
 				prendi_in_carico_ordine_pizza_plus(conn);
 				break;
 			case '3':
+				visualizza_ordini_pizza_da_espletare(conn);
+				break;
+			case '4':
+				visualizza_ordini_pizza_plus_da_espletare(conn);
+				break;
+			case '5':
 				return;
 				
 			default:

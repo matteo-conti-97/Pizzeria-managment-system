@@ -195,7 +195,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 					attr_size = sizeof(int);
 					break;
 				case MYSQL_TYPE_LONGLONG:
-					attr_size = sizeof(int);
+					attr_size = sizeof(long long int);
 					break;
 				default:
 					attr_size = fields[i].max_length;
@@ -242,7 +242,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 					case MYSQL_TYPE_DATE:
 					case MYSQL_TYPE_TIMESTAMP:
 						date = (MYSQL_TIME *)rs_bind[i].buffer;
-						printf(" %d-%02d-%02d |", date->year, date->month, date->day);
+						printf(" %4d-%02d-%02d |", date->year, date->month, date->day);
 						break;
 				       
 					case MYSQL_TYPE_STRING:
@@ -259,7 +259,9 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 					case MYSQL_TYPE_TINY:
 						printf(" %-*d |", (int)fields[i].max_length, *(int *)rs_bind[i].buffer);
 						break;
-				       
+				    case MYSQL_TYPE_LONGLONG:
+				    	printf(" %-*lld |", (int)fields[i].max_length, *(long long int *)rs_bind[i].buffer);
+				    	break;
 					case MYSQL_TYPE_NEWDECIMAL:
 						printf(" %-*.02lf |", (int)fields[i].max_length, *(float*) rs_bind[i].buffer);
 						break;

@@ -48,7 +48,7 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 		printf("Per favore digita ok\n");
 		goto check_ok_bevanda;
 	}
-	else if(strcmp(check,"stop")!=0) {
+	else if(strcmp(check,"stop")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
@@ -66,6 +66,7 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nell'espletare in carico ordine bevanda.\n");
+		return;
 	} else {
 		printf("Ordine bevanda espletato correttamente\n");
 	}
@@ -77,8 +78,6 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
 	long long int id_ordine;
-
-	visualizza_ordini_bevanda_da_espletare(conn);
 
 	// Prepare stored procedure call
 	if(!setup_prepared_stmt(&prepared_stmt, "call prendi_in_carico_ordine_bevanda(?)", conn)) {
@@ -108,6 +107,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel prendere in carico ordine bevanda.\n");
+		return;
 	} else {
 		printf("Ordine bevanda preso in carico correttamente\n");
 	}
@@ -121,7 +121,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 
 
 void run_as_barman(MYSQL *conn){
-	char options[3] = {'1','2'};
+	char options[4] = {'1','2','3'};
 	char op;
 	
 	printf("Passo al ruolo di barman...\n");
@@ -140,9 +140,10 @@ void run_as_barman(MYSQL *conn){
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
 		printf("1) Prendi in carico ordine bevanda\n");
-		printf("2) Quit\n");
+		printf("2) Visualizza ordini bevanda da espletare\n");
+		printf("3) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 2);
+		op = multiChoice("Seleziona un opzione", options, 3);
 
 		switch(op) {
 
@@ -150,6 +151,9 @@ void run_as_barman(MYSQL *conn){
 				prendi_in_carico_ordine_bevanda(conn);
 				break;
 			case '2':
+				visualizza_ordini_bevanda_da_espletare(conn);
+				break;
+			case '3':
 				return;
 				
 			default:

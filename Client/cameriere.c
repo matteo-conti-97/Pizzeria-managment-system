@@ -55,17 +55,6 @@ static void visualizza_menu_bevande(MYSQL *conn){
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
 	mysql_stmt_close(prepared_stmt);
-
-}
-
-static void visualizza_menu(MYSQL *conn) {
-	
-
-	visualizza_menu_pizze(conn);
-
-	visualizza_menu_ingredienti(conn);
-
-	visualizza_menu_bevande(conn);
 }
 
 static void visualizza_info_tavoli_associati(MYSQL *conn) {
@@ -85,7 +74,7 @@ static void visualizza_info_tavoli_associati(MYSQL *conn) {
 	
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_ordini_pizza_da_espletare\n", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_info_tavoli_associati\n", true);
 	}
 
 	// Run procedure
@@ -103,8 +92,6 @@ static void registra_ordine_pizza(MYSQL *conn){
 	MYSQL_BIND param[2];
 	char pizza[45];
 	int tavolo;
-
-	visualizza_menu_pizze(conn);
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -151,8 +138,6 @@ static void registra_ordine_bevanda(MYSQL *conn){
 	char bevanda[45];
 	int tavolo;
 
-	visualizza_menu_bevande(conn);
-
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
 
@@ -198,10 +183,6 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 	char pizza[45];
 	char ing[5][45];
 	int tavolo;
-
-	visualizza_menu_pizze(conn);
-
-	visualizza_menu_ingredienti(conn);
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -259,18 +240,21 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 }
 
 static void registra_ordine(MYSQL *conn) {
-	char options[7] = {'1','2','3','4'};
+	char options[8] = {'1','2','3','4','5','6','7'};
 	char op;
 
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Registra ordine pizza");
-		printf("2) Registra ordine pizza plus");
-		printf("3) Registra ordine bevanda");
-		printf("4) Quit\n");
+		printf("1) Registra ordine pizza\n");
+		printf("2) Registra ordine pizza plus\n");
+		printf("3) Registra ordine bevanda\n");
+		printf("4) Visualizza menu pizze\n");
+		printf("5) Visualizza menu bevande\n");
+		printf("6) Visualizza menu ingredienti\n");
+		printf("7) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 4);
+		op = multiChoice("Seleziona un opzione", options, 7);
 
 		switch(op) {
 
@@ -284,6 +268,15 @@ static void registra_ordine(MYSQL *conn) {
 				registra_ordine_bevanda(conn);
 				break;
 			case '4':
+				visualizza_menu_pizze(conn);
+				break;
+			case '5':
+				visualizza_menu_ingredienti(conn);
+				break;
+			case '6':
+				visualizza_menu_bevande(conn);
+				break;
+			case '7':
 				return;
 				
 			default:
@@ -297,10 +290,22 @@ static void registra_ordine(MYSQL *conn) {
 
 static void visualizza_ordini_espletati_pizza(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
+	MYSQL_BIND param[1];
 
 	//Pizza
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza statement\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &conf.username;
+	param[0].buffer_length = sizeof(conf.username);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_ordini_espletati_pizza\n", true);
 	}
 	
 
@@ -316,10 +321,21 @@ static void visualizza_ordini_espletati_pizza(MYSQL *conn){
 
 static void visualizza_ordini_espletati_bevanda(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	//Bevanda
+	MYSQL_BIND param[1];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_bevanda(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_bevanda statement\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &conf.username;
+	param[0].buffer_length = sizeof(conf.username);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_ordini_espletati_bevanda\n", true);
 	}
 
 	// Run procedure
@@ -334,10 +350,21 @@ static void visualizza_ordini_espletati_bevanda(MYSQL *conn){
 
 static void visualizza_ordini_espletati_pizza_plus(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	//Pizzaplus
+	MYSQL_BIND param[1];
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus()", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_ordini_espletati_pizza_plus(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_ordini_espletati_pizza_plus statement\n", false);
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+	param[0].buffer_type = MYSQL_TYPE_LONG;
+	param[0].buffer = &conf.username;
+	param[0].buffer_length = sizeof(conf.username);
+	
+	
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_ordini_espletati_pizza_plus\n", true);
 	}
 	
 	// Run procedure
@@ -348,15 +375,6 @@ static void visualizza_ordini_espletati_pizza_plus(MYSQL *conn){
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza plus espletati");
 	mysql_stmt_close(prepared_stmt);
-}
-
-static void visualizza_ordini_espletati(MYSQL *conn) {
-	
-	visualizza_ordini_espletati_pizza(conn);
-
-	visualizza_ordini_espletati_pizza_plus(conn);
-
-	visualizza_ordini_espletati_bevanda(conn);
 }
 
 static void consegna_ordine_pizza(MYSQL *conn){
@@ -395,6 +413,7 @@ static void consegna_ordine_pizza(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare  ordine pizza.\n");
+		return;
 	} else {
 		printf("Ordine pizza consegnato correttamente\n");
 	}
@@ -438,6 +457,7 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare ordine bevanda.\n");
+		return;
 	} else {
 		printf("Ordine bevanda consegnato correttamente\n");
 	}
@@ -481,6 +501,7 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare  ordine pizza plus.\n");
+		return;
 	} else {
 		printf("Ordine pizza plus consegnato correttamente\n");
 	}
@@ -495,9 +516,9 @@ static void consegna_ordine(MYSQL *conn) {
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Consegna ordine pizza");
-		printf("2) Consegna ordine pizza plus");
-		printf("3) Consegna ordine bevanda");
+		printf("1) Consegna ordine pizza\n");
+		printf("2) Consegna ordine pizza plus\n");
+		printf("3) Consegna ordine bevanda\n");
 		printf("4) Quit\n");
 
 		op = multiChoice("Seleziona un opzione", options, 4);
@@ -526,7 +547,7 @@ static void consegna_ordine(MYSQL *conn) {
 }
 
 void run_as_cameriere(MYSQL *conn){
-	char options[7] = {'1','2','3','4','5','6'};
+	char options[8] = {'1','2','3','4','5','6','7'};
 	char op;
 	
 	printf("Passo al ruolo di cameriere...\n");
@@ -544,14 +565,15 @@ void run_as_cameriere(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Visualizza tavoli associati");
-		printf("2) Registra ordine");
-		printf("3) Visualizza ordini espletati");
-		printf("4) Consegna ordine");
-		printf("5) Visualizza menu'");
-		printf("6) Quit\n");
+		printf("1) Visualizza tavoli associati\n");
+		printf("2) Registra ordine\n");
+		printf("3) Visualizza ordini pizza espletati\n");
+		printf("4) Visualizza ordini pizza plus espletati\n");
+		printf("5) Visualizza ordini bevanda espletati\n");
+		printf("6) Consegna ordine\n");
+		printf("7) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 6);
+		op = multiChoice("Seleziona un opzione", options, 7);
 
 		switch(op) {
 
@@ -562,15 +584,18 @@ void run_as_cameriere(MYSQL *conn){
 				registra_ordine(conn);
 				break;
 			case '3':
-				visualizza_ordini_espletati(conn);
+				visualizza_ordini_espletati_pizza(conn);
 				break;
 			case '4':
-				consegna_ordine(conn);
+				visualizza_ordini_espletati_pizza_plus(conn);
 				break;
 			case '5':
-				visualizza_menu(conn);
+				visualizza_ordini_espletati_bevanda(conn);
 				break;
 			case '6':
+				consegna_ordine(conn);
+				break;
+			case '7':
 				return;
 				
 			default:
