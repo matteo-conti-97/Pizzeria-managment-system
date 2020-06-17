@@ -158,10 +158,11 @@ static void stampa_scontrino(MYSQL *conn){
 
 static void visualizza_entrate_giorno(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	MYSQL_TIME data;
+	float entrate;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_giorno(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_giorno(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_entrate_giorno\n", false);
 	}
 	
@@ -196,6 +197,9 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 	param[0].buffer = (char *)&data;
 	param[0].buffer_length = sizeof(data);
 	
+	param[0].buffer_type = MYSQL_TYPE_FLOAT; // OUT
+	param[0].buffer = &entrate;
+	param[0].buffer_length = sizeof(entrate);
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters for visualizza_entrate_giorno\n", true);
@@ -206,18 +210,36 @@ static void visualizza_entrate_giorno(MYSQL *conn){
 		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_entrate_giorno\n", true);
 	}
 
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nEntrate:");
+	// Prepare output parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_FLOAT; // OUT
+	param[0].buffer = &entrate;
+	param[0].buffer_length = sizeof(entrate);
+	
+	if(mysql_stmt_bind_result(prepared_stmt, param)) {
+		print_stmt_error(prepared_stmt, "Could not retrieve output parameter");
+		return;
+	}
+	
+	// Retrieve output parameter
+	if(mysql_stmt_fetch(prepared_stmt)) {
+		print_stmt_error(prepared_stmt, "Could not buffer results");
+		return;
+	}
+
+	printf("Entrate del %d/%d/%d: %f", data.day,data.month, data.year,entrate);
 	mysql_stmt_close(prepared_stmt);
 }
 
 static void visualizza_entrate_mese(MYSQL *conn){
 	MYSQL_STMT *prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 	MYSQL_TIME data;
 	data.day=01;
+	float entrate=0;
 
-	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_mese(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_entrate_mese(?,?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_entrate_mese\n", false);
 	}
 
@@ -244,6 +266,10 @@ static void visualizza_entrate_mese(MYSQL *conn){
 	param[0].buffer_type = MYSQL_TYPE_DATE;
 	param[0].buffer = (char *)&data;
 	param[0].buffer_length = sizeof(data);
+
+	param[1].buffer_type = MYSQL_TYPE_FLOAT;
+	param[1].buffer = &entrate;
+	param[1].buffer_length = sizeof(entrate);
 	
 	
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -255,8 +281,25 @@ static void visualizza_entrate_mese(MYSQL *conn){
 		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_entrate_mese\n", true);
 	}
 
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nEntrate:");
+	// Prepare output parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_FLOAT; // OUT
+	param[0].buffer = &entrate;
+	param[0].buffer_length = sizeof(entrate);
+	
+	if(mysql_stmt_bind_result(prepared_stmt, param)) {
+		print_stmt_error(prepared_stmt, "Could not retrieve output parameter");
+		return;
+	}
+	
+	// Retrieve output parameter
+	if(mysql_stmt_fetch(prepared_stmt)) {
+		print_stmt_error(prepared_stmt, "Could not buffer results");
+		return;
+	}
+
+	printf("Entrate del %d/%d: %f", data.month, data.year,entrate);
 	mysql_stmt_close(prepared_stmt);
 }
 
