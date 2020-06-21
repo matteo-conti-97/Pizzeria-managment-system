@@ -37,7 +37,7 @@ void print_error(MYSQL *conn, char *message)
 
 bool setup_prepared_stmt(MYSQL_STMT **stmt, char *statement, MYSQL *conn)
 {
-	bool update_length = true;
+	my_bool update_length = true;
 
 	*stmt = mysql_stmt_init(conn);
 	if (*stmt == NULL)
@@ -235,12 +235,20 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 				switch (rs_bind[i].buffer_type) {
 					
 					case MYSQL_TYPE_VAR_STRING:
-					case MYSQL_TYPE_DATETIME:
+					
 						printf(" %-*s |", (int)fields[i].max_length, (char*)rs_bind[i].buffer);
 						break;
-				       
+				    
+				    case MYSQL_TYPE_DATETIME:
+				    case MYSQL_TYPE_TIMESTAMP:  
+				    	date = (MYSQL_TIME *)rs_bind[i].buffer;
+						printf("%02d/%02d/%4d-%02d:%02d:%02d |", date->day, date->month, date->year,date->hour,date->minute,date->second);
+						break;
+					case MYSQL_TYPE_TIME:
+						date = (MYSQL_TIME *)rs_bind[i].buffer;
+						printf(" %02d-%02d-%02d |", date->hour,date->minute,date->second);
+						break;
 					case MYSQL_TYPE_DATE:
-					case MYSQL_TYPE_TIMESTAMP:
 						date = (MYSQL_TIME *)rs_bind[i].buffer;
 						printf(" %4d-%02d-%02d |", date->year, date->month, date->day);
 						break;

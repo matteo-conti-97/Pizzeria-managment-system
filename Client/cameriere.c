@@ -60,7 +60,8 @@ static void visualizza_menu_bevande(MYSQL *conn){
 static void visualizza_info_tavoli_associati(MYSQL *conn) {
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
-
+	int status;
+	int info=0;
 
 	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_info_tavoli_associati(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_info_tavoli_associati statement\n", false);
@@ -80,10 +81,38 @@ static void visualizza_info_tavoli_associati(MYSQL *conn) {
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_info_tavoli_associati\n", true);
+		goto out;
 	}
 
-	// Dump the result set
-	dump_result_set(conn, prepared_stmt, "\nLista dei tavoli associati");
+	// We have multiple result sets here!
+	do {
+		// Skip OUT variables (although they are not present in the procedure...)
+		if(conn->server_status & SERVER_PS_OUT_PARAMS) {
+			goto next;
+		}
+
+		if(info==0) {
+			dump_result_set(conn,prepared_stmt,"Tavoli liberi:\n");
+			info++;
+		} 
+		else if(info==1){
+			dump_result_set(conn,prepared_stmt,"Tavoli occupati:\n");
+			info++;
+		}
+		else{
+			dump_result_set(conn,prepared_stmt,"Tavoli serviti:\n");
+			info=0;
+		}
+
+		// more results? -1 = no, >0 = error, 0 = yes (keep looking)
+	    next:
+		status = mysql_stmt_next_result(prepared_stmt);
+		if (status > 0)
+			finish_with_stmt_error(conn, prepared_stmt, "Unexpected condition", true);
+		
+	} while (status == 0);
+
+    out:
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -95,7 +124,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
-
+	memset(pizza,'\0', sizeof(pizza));
 	printf("Inserisci il tavolo:\n");
 
 	if(scanf("%d",&tavolo)<1){
@@ -140,7 +169,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
-
+	memset(bevanda,'\0', sizeof(bevanda));
 	printf("Inserisci il tavolo:\n");
 
 	if(scanf("%d",&tavolo)<1){
@@ -186,7 +215,12 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
-
+	memset(pizza,'\0', sizeof(pizza));
+	memset(ing[0],'\0', sizeof(ing[0]));
+	memset(ing[1],'\0', sizeof(ing[1]));
+	memset(ing[2],'\0', sizeof(ing[2]));
+	memset(ing[3],'\0', sizeof(ing[3]));
+	memset(ing[4],'\0', sizeof(ing[4]));
 	printf("Inserisci il tavolo:\n");
 
 	if(scanf("%d",&tavolo)<1){

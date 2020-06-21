@@ -29,7 +29,7 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
-	
+	memset(check,'\0', sizeof(check));
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;
 	param[0].buffer = &ordine;
 	param[0].buffer_length = sizeof(ordine);
