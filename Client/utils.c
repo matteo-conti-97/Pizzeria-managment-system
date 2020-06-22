@@ -80,7 +80,7 @@ static void print_dashes(MYSQL_RES *res_set)
 	putchar('+');
 	for (i = 0; i < mysql_num_fields(res_set); i++) {
 		field = mysql_fetch_field(res_set);
-		for (j = 0; j < field->max_length + 2; j++)
+		for (j = 0; j < field->length + 2; j++)
 			putchar('-');
 		putchar('+');
 	}
@@ -102,11 +102,11 @@ static void dump_result_set_header(MYSQL_RES *res_set)
 		field = mysql_fetch_field (res_set);
 		col_len = strlen(field->name);
 
-		if (col_len < field->max_length)
-			col_len = field->max_length;
+		if (col_len < field->length)
+			col_len = field->length;
 		if (col_len < 4 && !IS_NOT_NULL(field->flags))
 			col_len = 4; /* 4 = length of the word "NULL" */
-		field->max_length = col_len; /* reset column info */
+		field->length = col_len; /* reset column info */
 	}
 	
 	print_dashes(res_set);
@@ -114,7 +114,7 @@ static void dump_result_set_header(MYSQL_RES *res_set)
 	mysql_field_seek (res_set, 0);
 	for (i = 0; i < mysql_num_fields(res_set); i++) {
 		field = mysql_fetch_field(res_set);
-		printf(" %-*s |", (int)field->max_length, field->name);
+		printf(" %-*s |", (int)field->length, field->name);
 	}
 	putchar('\n');
 
@@ -133,7 +133,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 	size_t attr_size;
 
 	/* Prefetch the whole result set. This in conjunction with
-	 * STMT_ATTR_UPDATE_MAX_LENGTH set in `setup_prepared_stmt`
+	 * STMT_ATTR_UPDATE_length set in `setup_prepared_stmt`
 	 * updates the result set metadata which are fetched in this
 	 * function, to allow to compute the actual max length of
 	 * the columns.
@@ -198,7 +198,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 					attr_size = sizeof(long long int);
 					break;
 				default:
-					attr_size = fields[i].max_length;
+					attr_size = fields[i].length;
 					break;
 			}
 			
@@ -228,7 +228,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 			for (i = 0; i < num_fields; i++) {
 
 				if (rs_bind[i].is_null_value) {
-					printf (" %-*s |", (int)fields[i].max_length, "NULL");
+					printf (" %-*s |", (int)fields[i].length, "NULL");
 					continue;
 				}
 
@@ -236,7 +236,7 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 					
 					case MYSQL_TYPE_VAR_STRING:
 					
-						printf(" %-*s |", (int)fields[i].max_length, (char*)rs_bind[i].buffer);
+						printf(" %-*s |", (int)fields[i].length, (char*)rs_bind[i].buffer);
 						break;
 				    
 				    case MYSQL_TYPE_DATETIME:
@@ -254,24 +254,24 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 						break;
 				       
 					case MYSQL_TYPE_STRING:
-						printf(" %-*s |", (int)fields[i].max_length, (char *)rs_bind[i].buffer);
+						printf(" %-*s |", (int)fields[i].length, (char *)rs_bind[i].buffer);
 						break;
 		 
 					case MYSQL_TYPE_FLOAT:
 					case MYSQL_TYPE_DOUBLE:
-						printf(" %.02f |", *(float *)rs_bind[i].buffer);
+						printf(" %-*.02f |", (int)fields[i].length,*(float *)rs_bind[i].buffer);
 						break;
 		 
 					case MYSQL_TYPE_LONG:
 					case MYSQL_TYPE_SHORT:
 					case MYSQL_TYPE_TINY:
-						printf(" %-*d |", (int)fields[i].max_length, *(int *)rs_bind[i].buffer);
+						printf(" %-*d |", (int)fields[i].length, *(int *)rs_bind[i].buffer);
 						break;
 				    case MYSQL_TYPE_LONGLONG:
-				    	printf(" %-*lld |", (int)fields[i].max_length, *(long long int *)rs_bind[i].buffer);
+				    	printf(" %-*lld |", (int)fields[i].length, *(long long int *)rs_bind[i].buffer);
 				    	break;
 					case MYSQL_TYPE_NEWDECIMAL:
-						printf(" %-*.02lf |", (int)fields[i].max_length, *(float*) rs_bind[i].buffer);
+						printf(" %-*.02lf |", (int)fields[i].length, *(float*) rs_bind[i].buffer);
 						break;
 	 
 					default:
