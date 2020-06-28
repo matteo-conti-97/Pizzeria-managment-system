@@ -283,7 +283,6 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 			print_dashes(rs_metadata);
 		}
 		mysql_free_result(rs_metadata); /* free metadata */
-
 		/* free output buffers */
 		for (i = 0; i < num_fields; i++) {
 			free(rs_bind[i].buffer);

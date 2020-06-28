@@ -80,6 +80,7 @@ static void visualizza_tavoli(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Lista tavoli");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -344,6 +345,7 @@ static void visualizza_menu_pizze(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -361,6 +363,7 @@ static void visualizza_menu_ingredienti(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' ingredienti");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -379,6 +382,7 @@ static void visualizza_menu_bevande(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 
 }
@@ -1033,6 +1037,25 @@ static void visualizza_camerieri(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Lista camerieri");
+	mysql_stmt_next_result(prepared_stmt);
+	mysql_stmt_close(prepared_stmt);
+}
+
+static void visualizza_assegnazioni_tavoli_camerieri(MYSQL *conn){
+	MYSQL_STMT *prepared_stmt;
+	//Camerieri
+	if(!setup_prepared_stmt(&prepared_stmt, "call visualizza_assegnazioni_tavoli_a_camerieri()", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize visualizza_assegnazioni_tavoli_a_camerieri statement\n", false);
+	}
+	
+	// Run procedure
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve visualizza_assegnazioni_tavoli_a_camerieri\n", true);
+	}
+
+	// Dump the result set
+	dump_result_set(conn, prepared_stmt, "\n Lista assegnazioni");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -1135,21 +1158,22 @@ static void rimuovi_tavolo_a_cameriere(MYSQL *conn){
 }
 
 static void gestisci_tavoli(MYSQL *conn){
-	char options[8] = {'1','2','3','4','5','6','7'};
+	char options[9] = {'1','2','3','4','5','6','7','8'};
 	char op;
 
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Visualizza tavoli\n ");
+		printf("1) Visualizza tavoli\n");
 		printf("2) Aggiungi tavolo\n ");
 		printf("3) Rimuovi tavolo\n");
-		printf("4) Assegna tavolo a cameriere\n ");
+		printf("4) Assegna tavolo a cameriere\n");
 		printf("5) Rimuovi tavolo a cameriere\n");
-		printf("6) Visualizza camerieri\n ");
-		printf("7) Quit\n");
+		printf("6) Visualizza camerieri\n");
+		printf("7) Visualizza assegnazioni tavoli\n");
+		printf("8) Quit\n");
 
-		op = multiChoice("Seleziona un opzione", options, 7);
+		op = multiChoice("Seleziona un opzione", options, 8);
 
 		switch(op) {
 			case '1':
@@ -1171,6 +1195,9 @@ static void gestisci_tavoli(MYSQL *conn){
 				visualizza_camerieri(conn);
 				break;
 			case '7':
+				visualizza_assegnazioni_tavoli_camerieri(conn);
+				break;
+			case '8':
 				return;
 				
 			default:
@@ -1242,6 +1269,7 @@ static void visualizza_turni(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nTurni:");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -1259,6 +1287,7 @@ static void visualizza_impiegati(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nImpiegati:");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -1464,6 +1493,7 @@ static void visualizza_turni_impiegati(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nTurni impiegati:");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);	
 }
 
@@ -1575,6 +1605,7 @@ static void visualizza_turni_tavoli(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nTurni tavoli:");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);	
 }
 

@@ -19,6 +19,7 @@ static void visualizza_ordini_bevanda_da_espletare(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista delle bevande da espletare");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 

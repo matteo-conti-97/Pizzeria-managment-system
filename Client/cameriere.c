@@ -19,6 +19,7 @@ static void visualizza_menu_pizze(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' pizze");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -36,6 +37,7 @@ static void visualizza_menu_ingredienti(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' ingredienti");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -54,6 +56,7 @@ static void visualizza_menu_bevande(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\n Menu' bevande");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -350,6 +353,7 @@ static void visualizza_ordini_espletati_pizza(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza espletati");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -379,6 +383,7 @@ static void visualizza_ordini_espletati_bevanda(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista ordini bevanda espletati");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
@@ -408,6 +413,7 @@ static void visualizza_ordini_espletati_pizza_plus(MYSQL *conn){
 
 	// Dump the result set
 	dump_result_set(conn, prepared_stmt, "\nLista ordini pizza plus espletati");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 }
 
