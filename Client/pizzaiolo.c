@@ -248,7 +248,7 @@ void run_as_pizzaiolo(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Prendi in carico ordine pizza\n ");
+		printf("1) Prendi in carico ordine pizza\n");
 		printf("2) Prendi in carico ordine pizzaplus\n");
 		printf("3) Visualizza ordini pizza da espletare\n");
 		printf("4) Visualizza ordini pizza plus da espletare\n");

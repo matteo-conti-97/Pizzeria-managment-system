@@ -559,7 +559,7 @@ static void aumenta_scorte_prodotto(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Aumenta scorte pizza\n ");
+		printf("1) Aumenta scorte pizza\n");
 		printf("2) Aumenta scorte bevanda\n");
 		printf("3) Aumenta scorte ingrediene\n");
 		printf("4) Aumenta scorte di tutti i prodotti\n");
@@ -731,7 +731,7 @@ static void aggiungi_prodotto(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Aggiungi pizza\n ");
+		printf("1) Aggiungi pizza\n");
 		printf("2) Aggiungi bevanda\n");
 		printf("3) Aggiungi ingrediente\n");
 		printf("4) Quit\n");
@@ -861,7 +861,7 @@ static void rimuovi_prodotto(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Rimuovi pizza\n ");
+		printf("1) Rimuovi pizza\n");
 		printf("2) Rimuovi bevanda\n");
 		printf("3) Rimuovi ingrediente\n");
 		printf("4) Quit\n");
@@ -898,9 +898,9 @@ static void gestisci_prodotti(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Visualizza pizze\n ");
-		printf("2) Visualizza bevande\n ");
-		printf("3) Visualizza ingredienti\n ");
+		printf("1) Visualizza pizze\n");
+		printf("2) Visualizza bevande\n");
+		printf("3) Visualizza ingredienti\n");
 		printf("4) Aumenta scorte prodotto\n");
 		printf("5) Aggiungi prodotto\n");
 		printf("6) Rimuovi prodotto\n");
@@ -1165,7 +1165,7 @@ static void gestisci_tavoli(MYSQL *conn){
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
 		printf("1) Visualizza tavoli\n");
-		printf("2) Aggiungi tavolo\n ");
+		printf("2) Aggiungi tavolo\n");
 		printf("3) Rimuovi tavolo\n");
 		printf("4) Assegna tavolo a cameriere\n");
 		printf("5) Rimuovi tavolo a cameriere\n");
@@ -1216,7 +1216,7 @@ static int choose_day(){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Selezionare un giorno ***\n\n");
-		printf("1) Lunedi'\n ");
+		printf("1) Lunedi'\n");
 		printf("2) Martedi'\n");
 		printf("3) Mercoledi'\n");
 		printf("4) Giovedi'\n");
@@ -1996,7 +1996,7 @@ static int choose_role(){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Selezionare un ruolo ***\n\n");
-		printf("1) Manager\n ");
+		printf("1) Manager\n");
 		printf("2) Cameriere\n");
 		printf("3) Pizzaiolo\n");
 		printf("4) Barman\n");
@@ -2139,7 +2139,7 @@ static void gestisci_impiegati(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Aggiungi impiegato\n ");
+		printf("1) Aggiungi impiegato\n");
 		printf("2) Rimuovi impiegato\n");
 		printf("3) Visualizza impiegati\n");
 		printf("4) Quit\n");
@@ -2188,7 +2188,7 @@ void run_as_manager(MYSQL *conn){
 	while(true) {
 		printf("\033[2J\033[H");
 		printf("*** Cosa posso fare per te? ***\n\n");
-		printf("1) Registra cliente\n ");
+		printf("1) Registra cliente\n");
 		printf("2) Stampa scontrino\n");
 		printf("3) Gestisci prodotti\n");
 		printf("4) Gestisci tavoli\n");
