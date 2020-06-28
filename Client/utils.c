@@ -282,7 +282,6 @@ void dump_result_set(MYSQL *conn, MYSQL_STMT *stmt, char *title)
 			putchar('\n');
 			print_dashes(rs_metadata);
 		}
-
 		mysql_free_result(rs_metadata); /* free metadata */
 
 		/* free output buffers */

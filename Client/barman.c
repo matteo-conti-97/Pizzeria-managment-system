@@ -36,19 +36,20 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 
 
 	check_ok_bevanda:
-	//espleta ordine
-	printf("Digitare ok per espletare l'ordine o stop per tornare indietro\n");
+	//espleta ordine, viene messa questa scanf in modo da poter prende in carico l'ordine ed espletarlo solo 
+	//quando e' stato effettivamente fatto, evitando al barman di dover ricordare l'id dell'ordine
+	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_bevanda;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"stop")!=0)){
-		printf("Per favore digita ok\n");
+	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
+		printf("Per favore digita ok oppure back\n");
 		goto check_ok_bevanda;
 	}
-	else if(strcmp(check,"stop")==0) {
+	else if(strcmp(check,"back")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
@@ -87,12 +88,13 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
 	
-	printf("\nID ordine: ");
+	printf("\nDigitare l'id ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
 		flush_stdin();
 		return;
 	}
+
 	flush_stdin();
 
 	param[0].buffer_type = MYSQL_TYPE_LONGLONG;

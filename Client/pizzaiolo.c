@@ -36,19 +36,20 @@ static void espleta_ordine_pizza(MYSQL *conn, long long int ordine){
 	param[0].buffer_length = sizeof(ordine);
 
 	check_ok_pizza:
-	//espleta ordine
-	printf("Digitare ok per espletare l'ordine o stop per tornare indietro\n");
+	//espleta ordine, viene messa questa scanf in modo da poter prende in carico l'ordine ed espletarlo solo 
+	//quando e' stato effettivamente fatto, evitando al pizzaiolo di dover ricordare l'id dell'ordine
+	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_pizza;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"stop")!=0)){
-		printf("Per favore digita ok o stop\n");
+	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
+		printf("Per favore digita ok o back\n");
 		goto check_ok_pizza;
 	}
-	else if(strcmp(check,"stop")==0) {
+	else if(strcmp(check,"back")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
@@ -147,18 +148,18 @@ static void espleta_ordine_pizza_plus(MYSQL *conn, long long int ordine){
 	param[0].buffer_length = sizeof(ordine);
 	check_ok_pizza_plus:
 	//espleta ordine
-	printf("Digitare ok per espletare l'ordine o stop per tornare indietro\n");
+	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_pizza_plus;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"stop")!=0)){
-		printf("Per favore digita ok\n");
+	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
+		printf("Per favore digita ok o back\n");
 		goto check_ok_pizza_plus;
 	}
-	else if(strcmp(check,"stop")==0) {
+	else if(strcmp(check,"back")==0) {
 		printf("Operazione annullata\n");
 		return;
 	}
