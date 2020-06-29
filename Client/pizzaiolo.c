@@ -27,7 +27,7 @@ static void visualizza_ordini_pizza_da_espletare(MYSQL *conn){
 static void espleta_ordine_pizza(MYSQL *conn, long long int ordine){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
-	char check[4];
+	char check[2];
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -39,21 +39,18 @@ static void espleta_ordine_pizza(MYSQL *conn, long long int ordine){
 	check_ok_pizza:
 	//espleta ordine, viene messa questa scanf in modo da poter prende in carico l'ordine ed espletarlo solo 
 	//quando e' stato effettivamente fatto, evitando al pizzaiolo di dover ricordare l'id dell'ordine
-	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
+	printf("Digitare ok per espletare l'ordine\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_pizza;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
-		printf("Per favore digita ok o back\n");
+	if(strcmp(check,"ok")!=0){
+		printf("Per favore digita ok\n");
 		goto check_ok_pizza;
 	}
-	else if(strcmp(check,"back")==0) {
-		printf("Operazione annullata\n");
-		return;
-	}
+
 	// Prepare stored procedure call
 	if(!setup_prepared_stmt(&prepared_stmt, "call espleta_ordine_pizza(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize espleta_ordine_pizza statement\n", false);
@@ -92,7 +89,7 @@ static void prendi_in_carico_ordine_pizza(MYSQL *conn) {
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
 		flush_stdin();
-		return;
+		run_as_pizzaiolo(conn);
 	}
 
 	flush_stdin();
@@ -140,7 +137,7 @@ static void visualizza_ordini_pizza_plus_da_espletare(MYSQL *conn){
 static void espleta_ordine_pizza_plus(MYSQL *conn, long long int ordine){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
-	char check[4];
+	char check[2];
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -150,23 +147,20 @@ static void espleta_ordine_pizza_plus(MYSQL *conn, long long int ordine){
 	param[0].buffer_length = sizeof(ordine);
 	check_ok_pizza_plus:
 	//espleta ordine
-	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
+	printf("Digitare ok per espletare l'ordine\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_pizza_plus;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
-		printf("Per favore digita ok o back\n");
+	if(strcmp(check,"ok")!=0){
+		printf("Per favore digita ok\n");
 		goto check_ok_pizza_plus;
 	}
-	else if(strcmp(check,"back")==0) {
-		printf("Operazione annullata\n");
-		return;
-	}
+
 	// Prepare stored procedure call
-	if(!setup_prepared_stmt(&prepared_stmt, "call espleta_ordine_pizza_plus(?)", conn)) {
+	if(!setup_prepared_stmt(&prepared_stmt, "call espleta_ordine_pizzaplus(?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize espleta_ordine_pizza_plusstatement\n", false);
 	}
 
@@ -202,7 +196,7 @@ static void prendi_in_carico_ordine_pizza_plus(MYSQL *conn) {
 	printf("\nID ordine: ");
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
-		return;
+		run_as_pizzaiolo(conn);
 	}
 	flush_stdin();
 

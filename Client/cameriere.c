@@ -95,15 +95,15 @@ static void visualizza_info_tavoli_associati(MYSQL *conn) {
 		}
 
 		if(info==0) {
-			dump_result_set(conn,prepared_stmt,"Tavoli liberi:\n");
+			dump_result_set(conn,prepared_stmt,"\nTavoli liberi:\n");
 			info++;
 		} 
 		else if(info==1){
-			dump_result_set(conn,prepared_stmt,"Tavoli occupati:\n");
+			dump_result_set(conn,prepared_stmt,"\nTavoli occupati:\n");
 			info++;
 		}
 		else{
-			dump_result_set(conn,prepared_stmt,"Tavoli serviti:\n");
+			dump_result_set(conn,prepared_stmt,"\nTavoli serviti:\n");
 			info=0;
 		}
 
@@ -136,6 +136,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 		return;
 	}
 	flush_stdin();
+
 	param[0].buffer_type = MYSQL_TYPE_LONG;
 	param[0].buffer = &tavolo;
 	param[0].buffer_length = sizeof(tavolo);
@@ -158,7 +159,7 @@ static void registra_ordine_pizza(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve registra_ordine_pizza\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve registra_ordine_pizza\n");
 	}else printf("Ordine pizza registrato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -203,7 +204,7 @@ static void registra_ordine_bevanda(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve registra_ordine_bevanda\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve registra_ordine_bevanda\n");
 	}else printf("Ordine bevanda registrato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -215,6 +216,7 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 	char pizza[45];
 	char ing[5][45];
 	int tavolo;
+	my_bool is_null;
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -245,19 +247,21 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 	param[1].buffer_length = sizeof(pizza);
 
 	int i=0;
-	bool stop=true;
+	bool stop=false;
 	for(i=0;i<5;i++){
-		if(!stop){
-			printf("Inserire ingrediente %d oppure digitare stop per terminare inserimento\n",i+1);
+		if(stop==false){
+			printf("Inserire ingrediente %d oppure digitare stop se non si devono inserire altri ingredienti\n",i+1);
 			getInput(45,ing[i],false);
 			if(strcmp(ing[i],"stop")==0){
-				strcpy(ing[i],"");
-				stop=false;
+				param[i+2].is_null=&is_null;
+				stop=true;
+				continue;
 			}
-		}else strcpy(ing[i],"");
 			param[i+2].buffer_type = MYSQL_TYPE_STRING;
 			param[i+2].buffer = ing[i];
 			param[i+2].buffer_length = sizeof(ing[i]);
+		}
+		else param[i+2].is_null=&is_null;	
 	}
 
 	if(!setup_prepared_stmt(&prepared_stmt, "call registra_ordine_pizza_plus(?,?,?,?,?,?,?)", conn)) {
@@ -270,10 +274,11 @@ static void registra_ordine_pizza_plus(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve registra_ordine_pizza_plus\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve registra_ordine_pizza_plus\n");
 	}else printf("Ordine pizza plus registrato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
+		
 }
 
 static void registra_ordine(MYSQL *conn) {
@@ -308,10 +313,10 @@ static void registra_ordine(MYSQL *conn) {
 				visualizza_menu_pizze(conn);
 				break;
 			case '5':
-				visualizza_menu_ingredienti(conn);
+				visualizza_menu_bevande(conn);
 				break;
 			case '6':
-				visualizza_menu_bevande(conn);
+				visualizza_menu_ingredienti(conn);
 				break;
 			case '7':
 				return;
@@ -453,7 +458,6 @@ static void consegna_ordine_pizza(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare  ordine pizza.\n");
-		return;
 	} else {
 		printf("Ordine pizza consegnato correttamente\n");
 	}
@@ -497,7 +501,6 @@ static void consegna_ordine_bevanda(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare ordine bevanda.\n");
-		return;
 	} else {
 		printf("Ordine bevanda consegnato correttamente\n");
 	}
@@ -541,7 +544,6 @@ static void consegna_ordine_pizza_plus(MYSQL *conn){
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel consegnare  ordine pizza plus.\n");
-		return;
 	} else {
 		printf("Ordine pizza plus consegnato correttamente\n");
 	}

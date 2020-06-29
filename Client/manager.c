@@ -141,10 +141,12 @@ static void registra_cliente(MYSQL *conn) {
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not run register client\n", true);
+		print_stmt_error(prepared_stmt, "Could not run register client\n");
 	} else printf("Cliente registrato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
+
+	visualizza_tavoli(conn);
 
 	//Registrazione cliente
 	if(!setup_prepared_stmt(&prepared_stmt, "call assegna_tavolo_a_cliente(?,?)", conn)) {
@@ -154,7 +156,7 @@ static void registra_cliente(MYSQL *conn) {
 	// Prepare parameters
 
 	memset(param1, 0, sizeof(param1));
-	printf("Inserire tavolo:\n");
+	printf("\n\nInserire tavolo da assegnare al cliente:\n");
 	if(scanf("%d",&tavolo)<1){
 		printf("Errore inserimento tavolo\n");
 		flush_stdin();
@@ -177,7 +179,7 @@ static void registra_cliente(MYSQL *conn) {
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not assign table\n", true);
+		print_stmt_error(prepared_stmt, "Could not assign table\n");
 	} else printf("Tavolo assegnato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -424,7 +426,7 @@ static void aumenta_scorte_pizza(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve refill pizza\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve refill pizza\n");
 	}else printf("Scorte aumentate correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -467,7 +469,7 @@ static void aumenta_scorte_bevanda(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve refill bevanda\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve refill bevanda\n");
 	}else printf("Scorte aumentate correttamente\n");
 	
 	mysql_stmt_close(prepared_stmt);
@@ -510,7 +512,7 @@ static void aumenta_scorte_ingrediente(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve refill ingrediente\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve refill ingrediente\n");
 	}else printf("Scorte aumentate correttamente\n");
 	
 	mysql_stmt_close(prepared_stmt);
@@ -546,7 +548,7 @@ static void aumenta_scorte_tutti_prodotti(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not retrieve refill tutti_prodotti\n", true);
+		print_stmt_error(prepared_stmt, "Could not retrieve refill tutti_prodotti\n");
 	}else printf("Scorte aumentate correttamente\n");
 	
 	mysql_stmt_close(prepared_stmt);
@@ -561,7 +563,7 @@ static void aumenta_scorte_prodotto(MYSQL *conn){
 		printf("*** Cosa posso fare per te? ***\n\n");
 		printf("1) Aumenta scorte pizza\n");
 		printf("2) Aumenta scorte bevanda\n");
-		printf("3) Aumenta scorte ingrediene\n");
+		printf("3) Aumenta scorte ingrediente\n");
 		printf("4) Aumenta scorte di tutti i prodotti\n");
 		printf("5) Quit\n");
 
@@ -631,7 +633,7 @@ static void aggiungi_pizza(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add pizza\n", true);
+		print_stmt_error(prepared_stmt, "Could not add pizza\n");
 	}else printf("Pizza aggiunta correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -675,7 +677,7 @@ static void aggiungi_bevanda(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add bevanda\n", true);
+		print_stmt_error(prepared_stmt, "Could not add bevanda\n");
 	}else printf("Bevanda aggiunta correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -718,7 +720,7 @@ static void aggiungi_ingrediente(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add ingrediente\n", true);
+		print_stmt_error(prepared_stmt, "Could not add ingrediente\n");
 	}else printf("Ingrediente aggiunta correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -786,7 +788,7 @@ static void rimuovi_pizza(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove pizza\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove pizza\n");
 	}else printf("Pizza rimossa correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -817,7 +819,7 @@ static void rimuovi_bevanda(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove bevanda\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove bevanda\n");
 	}else printf("Bevanda rimossa correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -848,7 +850,7 @@ static void rimuovi_ingrediente(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove ingrediente\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove ingrediente\n");
 	}else printf("Ingrediente rimuovi correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -982,7 +984,7 @@ static void aggiungi_tavolo(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add tavolo\n", true);
+		print_stmt_error(prepared_stmt, "Could not add tavolo\n");
 	}else printf("Tavolo aggiunto correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -1017,7 +1019,7 @@ static void rimuovi_tavolo(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove tavolo\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove tavolo\n");
 	}else printf("Tavolo rimosso correttamente\n");
 	
 	mysql_stmt_close(prepared_stmt);
@@ -1102,7 +1104,7 @@ static void assegna_tavolo_a_cameriere(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not assign table\n", true);
+		print_stmt_error(prepared_stmt, "Could not assign table\n");
 	}else printf("Tavolo assegnato correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -1151,7 +1153,7 @@ static void rimuovi_tavolo_a_cameriere(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove table assignment\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove table assignment\n");
 	}else printf("Assegnazione tavolo rimossa correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -1380,7 +1382,7 @@ static void assegna_turno_a_impiegato(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not assign workshift to employee\n", true);
+		print_stmt_error(prepared_stmt, "Could not assign workshift to employee\n");
 	}else printf("Turno assegnato correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1473,7 +1475,7 @@ static void assegna_turno_a_tavolo(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not assign workshift to table\n", true);
+		print_stmt_error(prepared_stmt, "Could not assign workshift to table\n");
 	}else printf("Turno assegnato correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1585,7 +1587,7 @@ static void rimuovi_turno_a_impiegato(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove employee's workshift\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove employee's workshift\n");
 	}else printf("Turno rimosso correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1697,7 +1699,7 @@ static void rimuovi_turno_a_tavolo(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove table's workshift\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove table's workshift\n");
 	}else printf("Turno rimosso correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1776,7 +1778,7 @@ static void aggiungi_turno(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add workshift\n", true);
+		print_stmt_error(prepared_stmt, "Could not add workshift\n");
 	}else printf("Turno aggiunto correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1857,7 +1859,7 @@ static void rimuovi_turno(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove workshift\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove workshift\n");
 	}else printf("Turno rimosso correttamente\n");
 	mysql_stmt_close(prepared_stmt);
 }
@@ -1954,7 +1956,7 @@ static void gestisci_turni(MYSQL *conn){
 		printf("1) Gestisci turni impiegati\n");
 		printf("2) Gestisci turni tavoli\n");
 		printf("3) Visualizza turni\n");
-		printf("4) Aggiungi turno\n ");
+		printf("4) Aggiungi turno\n");
 		printf("5) Rimuovi turno\n");
 		printf("6) Quit\n");
 
@@ -2091,7 +2093,7 @@ static void aggiungi_impiegato(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not add employee\n", true);
+		print_stmt_error(prepared_stmt, "Could not add employee\n");
 	}else printf("Impiegato aggiunto correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);
@@ -2126,7 +2128,7 @@ static void rimuovi_impiegato(MYSQL *conn){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not remove employee\n", true);
+		print_stmt_error(prepared_stmt, "Could not remove employee\n");
 	}else printf("Impiegato rimosso correttamente\n");
 
 	mysql_stmt_close(prepared_stmt);

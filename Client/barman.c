@@ -26,7 +26,7 @@ static void visualizza_ordini_bevanda_da_espletare(MYSQL *conn){
 static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 	MYSQL_STMT *prepared_stmt;
 	MYSQL_BIND param[1];
-	char check[4];
+	char check[2];
 
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
@@ -39,20 +39,16 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 	check_ok_bevanda:
 	//espleta ordine, viene messa questa scanf in modo da poter prende in carico l'ordine ed espletarlo solo 
 	//quando e' stato effettivamente fatto, evitando al barman di dover ricordare l'id dell'ordine
-	printf("Digitare ok per espletare l'ordine o back per tornare indietro\n");
+	printf("Digitare ok per espletare l'ordine\n");
 	if(scanf("%s", check)<1){
 		printf("Errore nella conferma\n");
 		flush_stdin();
 		goto check_ok_bevanda;
 	}
 	flush_stdin();
-	if((strcmp(check,"ok")!=0)&&(strcmp(check,"back")!=0)){
-		printf("Per favore digita ok oppure back\n");
+	if(strcmp(check,"ok")!=0){
+		printf("Per favore digita ok\n");
 		goto check_ok_bevanda;
-	}
-	else if(strcmp(check,"back")==0) {
-		printf("Operazione annullata\n");
-		return;
 	}
 
 	// Prepare stored procedure call
@@ -67,8 +63,7 @@ static void espleta_ordine_bevanda(MYSQL *conn,long long int ordine){
 
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error (prepared_stmt, "Errore nell'espletare in carico ordine bevanda.\n");
-		return;
+		print_stmt_error(prepared_stmt, "Errore nell'espletare ordine bevanda.\n");
 	} else {
 		printf("Ordine bevanda espletato correttamente\n");
 	}
@@ -93,7 +88,7 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	if(scanf("%lld", &id_ordine)<1){
 		printf("Errore nell'acquisire indice ordine\n");
 		flush_stdin();
-		return;
+		run_as_barman(conn);
 	}
 
 	flush_stdin();
@@ -110,7 +105,6 @@ static void prendi_in_carico_ordine_bevanda(MYSQL *conn) {
 	// Run procedure
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
 		print_stmt_error (prepared_stmt, "Errore nel prendere in carico ordine bevanda.\n");
-		return;
 	} else {
 		printf("Ordine bevanda preso in carico correttamente\n");
 	}
