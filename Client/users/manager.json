@@ -1,7 +1,7 @@
 {
-	"host": "localhost",
-	"username": "Manager",
-	"password": "manager",
-	"port": 3306,
-	"database": "dbPizzeria"
+  "host": "localhost",
+  "username": "Manager",
+  "password": "manager",
+  "port": 3306,
+  "database": "dbPizzeria"
 }
